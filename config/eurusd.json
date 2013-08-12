@@ -1,0 +1,112 @@
+{
+	"symbol" : "EURUSD",
+	"period" : 5,
+	"MAGICMA" : 42,
+	"initialWon" : 1000000,
+	"date" : { 
+		"from" : "",
+		"to" : ""
+	},
+	"externs" : {
+		"lots" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 2
+		},
+		"horaInicial" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"horaFinal" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"timeSalidaInicial" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"timeSalidaFinal" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBoll" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBoll2" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBoll3" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBollSalida" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBollSalida2" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"periodoBollSalida3" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"XBoll" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"XBoll2" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"XBoll3" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"tp" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"sl" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"bollXUp" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"bollXDn" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"bollXUpS" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+		"bollXDn" : {
+			"start" : 1,
+			"step" : 1,
+			"stop" : 1
+		},
+	}
+}

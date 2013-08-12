@@ -60,9 +60,11 @@ public class Iterador {
      */
     private void generate(int pos, ArrayList<int[]> v, String cumulo){
         //Cuando llegamos al final quiere decir que obtuvimos una nueva combinación
+        
         if (pos == v.size()) {
             this.rollOn(cumulo);
-            return;
+            System.out.println(cumulo);
+            return;            
         }
         for (int i = 0; i != v.get(pos).length; i++) {
            generate(pos+1, v,cumulo +""+ v.get(pos)[i]+"*");
