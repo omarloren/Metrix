@@ -24,7 +24,7 @@ public class Data {
         
         this.symbol = symbol;
         this.file = "data/"+this.symbol + ".txt";
-        this.mongo = new Mongo().build().setDB("data").setCollection(this.symbol);
+        this.mongo = new Mongo().setDB("data").setCollection(this.symbol);
     }
     /**
      * Construye el archivo de historicos, en resumen convierte un .txt a JSON

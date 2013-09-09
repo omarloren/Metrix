@@ -13,8 +13,8 @@ import java.util.Set;
  */
 public class Iterador {
     private Map<String, ArrayList> values;
-    private ArrayList<int[]> _collection = new ArrayList();
-    private ArrayList<Map<String, Integer>> pool = new ArrayList();
+    private ArrayList<Object[]> _collection = new ArrayList();
+    private ArrayList<Map<String, Object>> pool = new ArrayList();
     private Integer contIteraciones = 0;
     private Boolean hasNext = true;
     
@@ -23,12 +23,13 @@ public class Iterador {
         this.values = values;
         Set<String> set = values.keySet();
         for (String key : set) {
-            int[] temp = new int[values.get(key).size()];
+            Object[] temp = new Object[values.get(key).size()];
             for (int i = 0; i < values.get(key).size(); i++) {
-                temp[i] = ((Long)values.get(key).get(i)).intValue();
+                temp[i] = ((Object)values.get(key).get(i));
             }
             this._collection.add(temp);
         }
+        System.out.println(values);
         this.generate(0, this._collection, "");
     }
     
@@ -38,7 +39,7 @@ public class Iterador {
     /**
      * @return Siguente elemento en Pool de datos.
      */
-    public Map<String, Integer> next() {
+    public Map<String, Object> next() {
        //si hemos alcanzado el final del pool marcamos hasNext como falsa;
        if (this.contIteraciones + 1 == this.pool.size()) {
            this.hasNext = false;
@@ -58,12 +59,10 @@ public class Iterador {
      * @param v
      * @param cumulo 
      */
-    private void generate(int pos, ArrayList<int[]> v, String cumulo){
+    private void generate(int pos, ArrayList<Object[]> v, String cumulo){
         //Cuando llegamos al final quiere decir que obtuvimos una nueva combinación
-        
         if (pos == v.size()) {
             this.rollOn(cumulo);
-            System.out.println(cumulo);
             return;            
         }
         for (int i = 0; i != v.get(pos).length; i++) {
@@ -76,11 +75,11 @@ public class Iterador {
      */
     private void rollOn(String cumulo){
         String[] base = cumulo.split("\\*");
-        Map<String, Integer> temp = new HashMap<>();
+        Map<String, Object> temp = new HashMap<>();
         int i = 0;
         Set<String> set = values.keySet();
         for (String key : set) {
-            temp.put(key, new Integer(base[i]));
+            temp.put(key, base[i]);
             i++;
         }
         this.pool.add(temp);

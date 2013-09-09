@@ -25,12 +25,15 @@ import org.json.simple.parser.ParseException;
 public class Settings {
     
     private String symbol;
-    private String from;
-    private String to;
+    private Integer from;
+    private Integer to;
     private Integer period;
     private Integer MAGICMA;
     private Integer initialWon;
+    private Integer spread;
+    private Double point;
     private Map<String, ArrayList> externs = new HashMap<>();
+    private Map<String, Object> metrics = new HashMap<>();
     
     public Settings(String file){
         try {         
@@ -44,20 +47,33 @@ public class Settings {
                 switch (key) {
                     case "symbol":
                         this.symbol = (String) entry.getValue();
+                        if(this.symbol.equals("USDJPY")){
+                            this.point = 0.001;
+                        } else {
+                            this.point = 0.0001;
+                        }
                         break;
                     case "period":
                         this.period = ((Long) entry.getValue()).intValue();
                         break;
+                    case "spread":
+                        this.spread = ((Long) entry.getValue()).intValue();
+                        break;
                     case "date":
-                        LinkedHashMap<String,String> date =(LinkedHashMap)entry.getValue();
-                        this.to = (String)date.get("to");
-                        this.from = (String)date.get("from");
+                        LinkedHashMap<String,Long> date =(LinkedHashMap)entry.getValue();
+                        this.to = ((Long)date.get("to")).intValue();
+                        this.from = ((Long)date.get("from")).intValue();
                         break;
                     case "externs":
-                        System.out.println(entry.getValue());
-                        LinkedHashMap<String, LinkedHashMap<String,Long>> h = (LinkedHashMap)entry.getValue();
+                        LinkedHashMap<String, LinkedHashMap<String,Object>> h = (LinkedHashMap)entry.getValue();
                         for(String k : h.keySet()) {
                             this.externs.put(k, this.getVariable(h.get(k)));
+                        }
+                        break;
+                    case "metrics":
+                        LinkedHashMap<String, LinkedHashMap<String,Object>> l = (LinkedHashMap)entry.getValue();
+                        for(String k : l.keySet()) {
+                            this.metrics.put(k, l.get(k));
                         }
                         break;
                     case "MAGICMA":
@@ -67,7 +83,7 @@ public class Settings {
                         this.initialWon = ((Long) entry.getValue()).intValue();
                         break;
                     default:
-                        System.err.println("COLAPSO TOTAL: Settings");
+                        System.err.println("COLAPSO TOTAL: Settings => "+key);
                         break;
                 }
             }
@@ -76,18 +92,40 @@ public class Settings {
         }
         
     }
+    
      /**
      * Extraemos el start, step, stop.
      * @param l
      * @return 
      */
-    private ArrayList getVariable(LinkedHashMap<String,Long> l){
+    private ArrayList getVariable(LinkedHashMap<String,Object> l){
         ArrayList temp = new ArrayList();
-        Long start = l.get("start");
-        Long step = l.get("step");
-        Long stop = l.get("stop");
-        for (long i = start; i <= stop; i+=step) {
-            temp.add(i);
+        Object start;
+        Object step;
+        Object stop;
+        
+        if(l.get("start").getClass().getName().equals("java.lang.Double")) {
+            start = (Double)l.get("start");
+            step = (Double)l.get("step");
+            stop = (Double)l.get("stop");
+            if((Double)step > 0.0) {
+                for (Double i = (Double)start; i <= (Double)stop; i += (Double)step) {
+                    temp.add(i);
+                }    
+            } else {
+                temp.add(start);
+            }
+        } else {
+            start = (Long)l.get("start");
+            step = (Long)l.get("step");
+            stop = (Long)l.get("stop");
+            if((Long)step > 0.0) {
+                for (Long i = (Long)start; i <= (Long)stop; i += (Long)step) {
+                    temp.add(i);
+                }
+            }else{
+               temp.add(start);
+            }
         }
         
         return temp;
@@ -161,17 +199,19 @@ public class Settings {
     }
     
     public Integer getTo(){
-        Integer i = (new Integer(this.to.replaceAll("-", "")));
-        return i;
+        return this.to;
     }
     
     public Integer getFrom(){
-        Integer i = (new Integer(this.from.replaceAll("-", "")));
-        return i;
+        return this.from;
     }
         
     public Map<String, ArrayList> getExterns(){
         return this.externs;
+    }
+    
+    public Map<String, Object> getMetrics(){
+        return this.metrics;
     }
     
     public Integer getMagic(){
@@ -180,5 +220,13 @@ public class Settings {
     
     public Integer getInitialWon(){
         return this.initialWon;
+    }
+    
+    public Double getSpread() {
+        return this.spread *this.point ;
+    }
+    
+    public Double getPoint(){
+        return this.point;
     }
 }

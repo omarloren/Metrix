@@ -5,7 +5,7 @@
 currencies = EURUSD,USDJPY,GBPUSD,USDCHF,EURGBP 
 #Spread que usará la prueba.
 spread = 4.0
-
+lotes = 1
 # ubicación de archivo .set
 # "./" significa que se encuentra el el root del ejecutable, de otra
 # forma se buscara una ruta absoluta.
