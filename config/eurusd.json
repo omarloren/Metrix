@@ -5,14 +5,14 @@
     "spread" : 4,
     "initialWon" : 100000,
     "metrics": {
-      "break" : 20090101,      
+      "break" : 20080901,      
       "pain-i" : true,     
       "pain-r" : true,     
       "relative-dd" : true,
       "ir" : true
     },
     "date" : { 
-        "from" : 20080101,
+        "from" : 20080001,
         "to" : 20090101
     },
     "externs" : {

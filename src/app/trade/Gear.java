@@ -34,7 +34,7 @@ public class Gear {
         this.periodo = this.settings.getPeriod();
         this.candle = new Candle(this.periodo);
         this.broker = new Broker(this.settings.getInitialWon());        
-        this.expert.build(this.periodo).__construct(this.broker,(Integer)this.settings.getFrom(), this.symbol,this.settings.getPoint(), this.settings.getMagic());   
+        this.expert.build(this.periodo).__construct(this.broker,Integer.valueOf(this.settings.getFrom()), this.symbol,this.settings.getPoint(), this.settings.getMagic());   
     }
     
     public void rollOn(Map<String, Object> it) {
@@ -50,8 +50,8 @@ public class Gear {
         Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
         Double open = arr.get(0);
         if(Date.getMonth() != this.lastMonth) {
-            this.lastMonth = Date.getMonth(); 
-            MetricsController.refresh(this.broker.getBalance());
+            this.lastMonth = Date.getMonth();
+            MetricsController.refresh(Date.getDate(),this.broker.getBalance());
         }
         this.expert.setOpenMin(open);
         if (this.candle.isNew(Date.getMinutes())){
@@ -96,6 +96,6 @@ public class Gear {
     }
     
     public void flush() {
-         MetricsController.refresh(this.broker.getBalance());
+         MetricsController.flushMetrics(this.broker.getBalance());
     }
 }

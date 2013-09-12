@@ -9,7 +9,7 @@ import trade.Arithmetic;
  */
 public class Pain extends Metric{
         
-    public Pain(Integer initialAccount, Integer from, Integer to) {
+    public Pain(Integer initialAccount, String from, String to) {
         super(from, to);
         this.values.add(initialAccount.doubleValue());
     }
@@ -91,6 +91,16 @@ public class Pain extends Metric{
     }
     @Override
     public String toString(){
-         return "Annualised Return: " + this.getAnunualisedReturn() + " Index: "+ this.getIndex() + " Ratio:"+this.getRatio();
+         return "Pain => #"+(this.values.size()-1)+" Annualised Return: " + this.getAnunualisedReturn() + " Index: "+ this.getIndex() + " Ratio:"+this.getRatio();
     }  
+
+    @Override
+    public Boolean isActive(String date) {
+        return true;
+    }
+
+    @Override
+    public Boolean isNew() {
+        return false;
+    }
 }

@@ -25,8 +25,8 @@ import org.json.simple.parser.ParseException;
 public class Settings {
     
     private String symbol;
-    private Integer from;
-    private Integer to;
+    private String from;
+    private String to;
     private Integer period;
     private Integer MAGICMA;
     private Integer initialWon;
@@ -61,8 +61,8 @@ public class Settings {
                         break;
                     case "date":
                         LinkedHashMap<String,Long> date =(LinkedHashMap)entry.getValue();
-                        this.to = ((Long)date.get("to")).intValue();
-                        this.from = ((Long)date.get("from")).intValue();
+                        this.to = ((Long)date.get("to")).toString();
+                        this.from = ((Long)date.get("from")).toString();
                         break;
                     case "externs":
                         LinkedHashMap<String, LinkedHashMap<String,Object>> h = (LinkedHashMap)entry.getValue();
@@ -198,11 +198,11 @@ public class Settings {
         return this.period;
     }
     
-    public Integer getTo(){
+    public String getTo(){
         return this.to;
     }
     
-    public Integer getFrom(){
+    public String getFrom(){
         return this.from;
     }
         
