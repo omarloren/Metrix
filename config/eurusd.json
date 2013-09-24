@@ -2,7 +2,7 @@
     "symbol" : "EURUSD",
     "period" : 5,
     "MAGICMA" : 42,
-    "spread" : 4,
+    "spread" : 3,
     "initialWon" : 100000,
     "metrics": {
       "break" : 20080901,      
@@ -12,7 +12,7 @@
       "ir" : true
     },
     "date" : { 
-        "from" : 20080001,
+        "from" : 20080101,
         "to" : 20090101
     },
     "externs" : {
@@ -31,7 +31,7 @@
                 "step" : 0,
                 "stop" : 2
         },
-        "periodoBoll" : {
+        "periodoBoll3" : {
                 "start" : 13,
                 "step" : 0,
                 "stop" : 1
@@ -41,10 +41,10 @@
                 "step" : 0,
                 "stop" : 1
         },
-        "periodoBoll3" : {
+        "periodoBoll" : {
                 "start" : 1,
-                "step" : 0,
-                "stop" : 1
+                "step" : 1,
+                "stop" : 5
         },
         "periodoBollSalida" : {
                 "start" : 46,
@@ -62,17 +62,17 @@
                 "stop" : 1
         },
         "XBoll" : {
-                "start" : 36,
+                "start" : 30,
                 "step" : 0,
                 "stop" : 1
         },
         "XBoll2" : {
-                "start" : 60,
+                "start" : 36,
                 "step" : 0,
                 "stop" : 1
         },
         "XBoll3" : {
-                "start" : 30,
+                "start" : 60,
                 "step" : 0,
                 "stop" : 1
         },
@@ -82,7 +82,7 @@
                 "stop" : 1
         },
         "sl" : {
-                "start" : 79,
+                "start" : 90,
                 "step" : 0,
                 "stop" : 1
         },

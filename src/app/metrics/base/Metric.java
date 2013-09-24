@@ -8,15 +8,18 @@ import java.util.ArrayList;
  */
 public abstract class Metric { 
     
-    ArrayList<Double> values = new ArrayList();
+    private ArrayList<Double> values;
     private String from;
     private String to;
     private Boolean flushing = false;
+    private String id = "";
     Double lastValue = -1.0;
-    public Metric(String from, String to){
+    
+    public Metric(String id, String from, String to){
+        this.id = id;
         this.from = from;
         this.to = to;
-        
+        this.values = new ArrayList();
     }
     
     public void setFrom(String from){
@@ -43,7 +46,15 @@ public abstract class Metric {
         this.flushing = b;
         return this;
     }
-        
+    
+    public ArrayList<Double> getValues() {
+        return this.values;
+    }
+    
+    public String getId() {
+        return this.id;
+    }        
+    
     public void setLastValue(Double lastValue) {
         this.lastValue = lastValue;
     }

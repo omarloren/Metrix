@@ -1,31 +1,30 @@
 package app.metrics.base;
 
-import trade.Arithmetic;
-
 /**
  *
  * @author omar
  */
 public class Monthly extends Metric{
         
-    public Monthly(String from, String to){
-        super(from, to);        
+    
+    public Monthly(String id,String from, String to){
+        super(id, from, to);
     }
     
     @Override
     public void feed(Double val) {
         Double rest = val - this.lastValue;
         this.lastValue = val;
-        this.values.add(rest);
+        this.getValues().add(rest);
     }
     
     public Double getMonthlyAvg() {
         Double sum = 0.0;
-        for (int i = 0; i < this.values.size(); i++) {
-            sum += this.values.get(i);
+        for (int i = 0; i < this.getValues().size(); i++) {
+            sum += this.getValues().get(i);
         }
-        
-        return Arithmetic.redondear(sum / this.values.size(), 2) / 1000;
+        Double prm = (sum / this.getValues().size()) / 1000;
+        return prm;
     }
     
     @Override
@@ -39,7 +38,7 @@ public class Monthly extends Metric{
     
     @Override
     public String toString(){
-        return " Months => #"+this.values.size()+" From: "+this.getFrom() + " To:"+this.getTo() + " Monthly:"+this.getMonthlyAvg();
+        return " Months => #"+this.getValues().size()+" From: "+this.getFrom() + " To:"+this.getTo() + " Monthly:"+this.getMonthlyAvg();
     }
 
     @Override

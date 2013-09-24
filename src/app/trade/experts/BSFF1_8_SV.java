@@ -64,38 +64,49 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         limiteCruce = this.extern.getInteger("limiteCruce");
         horaIni = this.extern.getInteger("horainicial");
         horaFin = this.extern.getInteger("horafinal");
-        bollUp = this.bollUp();
-        bollDn = this.bollDn();
-        bollUpS = this.bollUpS();
-        bollDnS = this.bollDnS();
-        bollDif = this.bollDif();
+        this.bollUp = this.bollUp();
+        this.bollDn = this.bollDn();
+        this.bollUpS = this.bollUpS();
+        this.bollDnS = this.bollDnS();
+        this.bollDif = this.bollDif();
     }
-
+    
     @Override
     public void onTick() {
         
         if(this.isNewCandle()) {
-            bollUp = this.bollUp();
-            bollDn = this.bollDn();
-            bollUpS = this.bollUpS();
-            bollDnS = this.bollDnS();
-            bollDif = this.bollDif();
+            
+            this.bollUp = this.bollUp();
+            this.bollDn = this.bollDn();
+            this.bollUpS = this.bollUpS();
+            this.bollDnS = this.bollDnS();
+            this.bollDif = this.bollDif();
             this.contVelas++;
+            /*if(this.isTradeTime()){
+                try {
+                    Thread.sleep(200);
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(BSFF1_8_SV.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println(Date.dateToString() + " " +this);
+            }*/
         }
         
         if(this.isTradeTime() && this.bollDif < this.bollXUp && this.bollDif > this.bollXDn &&
                 this.ordersBySymbol() < this.limiteCruce) {
             
-            if(this.priceCut(this.getOpenMin() + this.bollSpecial) <= bollDn) {
-                double sl = Arithmetic.restar(this.getBid(), this.sl);
-                double tp = Arithmetic.sumar(this.getBid(), this.tp);
-                this.orderSend(1.0, sl, tp, '1', this.getAsk());
+            if(this.getOpenMin() + this.bollSpecial <= this.bollDn) {
+                
+                double stop = Arithmetic.redondear(this.getAsk() - this.sl);
+                double take = Arithmetic.redondear(this.getAsk() + this.tp);
+                this.orderSend(1.0, stop, take, '1', this.getAsk());
                 contVelas = 0;
                 
-            } else if(this.priceCut(this.getOpenMin() + this.bollSpecial) >= bollUp) {
-                double sl = Arithmetic.sumar(this.getAsk(), this.sl);
-                double tp = Arithmetic.restar(this.getBid(), this.tp);
-                this.orderSend(1.0, sl, tp, '2', this.getBid());
+            } else if(this.getOpenMin() - this.bollSpecial >= this.bollUp) {
+                double stop = Arithmetic.redondear(this.getBid() + this.sl);
+                double take = Arithmetic.redondear(this.getBid() - this.tp);
+                this.orderSend(1.0, stop, take, '2', this.getBid());
                 contVelas = 0;
             }
             
@@ -117,8 +128,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
                         o.close(this.getBid(), "Cierre por bollinger");
                         
                     } else if(this.contVelas >= this.velasSalida) {
-                        o.close(this.getBid(), "Cierre por velas");
-                                              
+                        o.close(this.getBid(), "Cierre por velas");                   
                     }
                 }
             }
@@ -144,16 +154,16 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      */
     public Double bollUp() {
         
-        return (b1.getUpperBand() + b2.getUpperBand() + 
-                            b3.getUpperBand())/3;
+        return (this.b1.getUpperBand() + this.b2.getUpperBand() + 
+                            this.b3.getUpperBand())/3;
     }
     /**
      * Promedio Entrada de compras.
      * @return 
      */
     private Double bollDn() {
-        return (b1.getLowerBand() + b1.getLowerBand() +
-                            b1.getLowerBand())/3;
+        return (this.b1.getLowerBand() + this.b2.getLowerBand() +
+                            this.b3.getLowerBand())/3;
     }
     
      /**
@@ -161,27 +171,26 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * @return 
      */
     private Double bollUpS() {
-        return (bs1.getUpperBand() + bs2.getUpperBand() +
-                            bs3.getUpperBand())/3;
+        return Arithmetic.redondear((this.bs1.getUpperBand() + this.bs2.getUpperBand() +
+                            this.bs3.getUpperBand())/3);
     }
     /**
      * Promedio salida de ventas.
      * @return 
      */
     private Double bollDnS() {
-        return (bs1.getLowerBand() + bs2.getLowerBand() +
-                            bs3.getLowerBand())/3;
+        return Arithmetic.redondear((this.bs1.getLowerBand() + this.bs2.getLowerBand() +
+                            this.bs3.getLowerBand())/3);
     }
     
     private Double bollDif() {
-        Double tempUp = Arithmetic.dividir(3, bx1.getUpperBand(), bx2.getUpperBand(), bx3.getUpperBand());
-        Double tempDn = Arithmetic.dividir(3, bx1.getLowerBand(), bx2.getLowerBand(), bx3.getLowerBand());
-        Double temp = Arithmetic.restar(tempUp, tempDn);
-        return temp;
+        Double tempUp = (this.bx1.getUpperBand() + this.bx2.getUpperBand() + this.bx3.getUpperBand())/3;
+        Double tempDn = (this.bx1.getLowerBand() + this.bx2.getLowerBand() + this.bx3.getLowerBand())/3;
+        return Arithmetic.redondear(tempUp - tempDn);
     }
     
     @Override
     public String toString(){
-        return Date.horaToString()+" "+this.getOpenMin() +" ==> BollUp:"+bollUp + " BollDn:"+bollDn;
+        return Date.dateToString()+" "+this.getOpenMin()  +" ==> BollUp:"+this.bollUp + " BollDn:"+this.bollDn;
     }
 }

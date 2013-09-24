@@ -1,11 +1,11 @@
 package app.trade;
 
-import com.mongodb.util.Util;
 import java.util.ArrayList;
 import trade.Arithmetic;
 import trade.Brokeable;
 import trade.Ordener;
 import trade.indicator.IndicatorController;
+import util.Date;
 
 /**
  *
@@ -119,14 +119,14 @@ public class Broker extends Brokeable{
     
     @Override
     public void ordenOpenCallback(Ordener o) {
-        //System.out.println((Orden)o);
+        //System.out.println(" + Open  - " +(Orden)o);
     }
 
     @Override
     public void orderCloseCallback(Ordener o) {
         Orden orden = (Orden) o;
         
-        //System.err.println(" > Close - " +Date.dateToString() + " #"+o.getID() + " " + o.getClosePrice() + " " +  o.getReason() + " ");
+        //System.err.println(" - Close - " + Date.dateToString()+ " #"+o.getID() + " " + o.getClosePrice() + " " +  o.getReason() + " Profit:"+ orden.getLossProfit());
         this.ordersClosed.add(orden);
         this.balance += orden.getLossProfit();
         this.totalTrades++;
@@ -190,7 +190,9 @@ public class Broker extends Brokeable{
     public Double getBalance(){   
         return this.balance;
     }
-    
+    public Double getProfit() {
+        return (this.getBalance() - this.initialDeposit);
+    }
     public Double getDrowDown(){
         return this.drowDown;
     }
@@ -224,6 +226,6 @@ public class Broker extends Brokeable{
     }
     @Override
     public String toString(){
-         return " | Trades:"+ this.totalTrades+" | Balance: "+ this.getBalance() + " | Relative DrowDown:"+Arithmetic.redondear(this.drowDown,3);
+         return " | Trades:"+ this.totalTrades+" | Balance: "+ this.getBalance() + " | Relative DrowDown:"+Arithmetic.redondear(this.drowDown,3) + " Profit:"+this.getProfit();
     }    
 }

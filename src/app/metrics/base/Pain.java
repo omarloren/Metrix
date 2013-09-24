@@ -8,27 +8,36 @@ import trade.Arithmetic;
  * @author omar
  */
 public class Pain extends Metric{
-        
-    public Pain(Integer initialAccount, String from, String to) {
-        super(from, to);
-        this.values.add(initialAccount.doubleValue());
+    
+    private Integer initialAccount;
+    
+    public Pain(String id, Integer initialAccount, String from, String to) {
+        super(id, from, to);
+        this.initialAccount = initialAccount;
+        this.getValues().add(initialAccount.doubleValue());
+        this.setFlush(true);
     }
     
     @Override
     public void feed(Double value) {
-        this.values.add(value);
+        this.getValues().add(value);
     }
     
     public Double getIndex() {
-        return Arithmetic.redondear(this.getPeakDrowDrawn() / this.length());
+        if(this.length() > 1) {
+            return Arithmetic.redondear(this.getPeakDrowDrawn() / this.length());
+        } else {
+            return 0.0;
+        }
     }
     
     private Double getPeakDrowDrawn() {
         Double sum = 0.0;
-        for (int i = 0; i < this.values.size(); i++) {
+        
+        for (int i = 0; i < this.getValues().size(); i++) {
             Double max = this.getMaximal(i);
-            if(this.values.get(i) / max - 1 < 0){
-                sum += Math.abs(this.values.get(i) / max - 1);
+            if(this.getValues().get(i) / max - 1 < 0) {
+                sum += Math.abs(this.getValues().get(i) / max - 1);
             }
         }
         return Arithmetic.redondear(sum * 100);
@@ -40,27 +49,32 @@ public class Pain extends Metric{
     
     public Double getMean() {
         Double sum = 0.0; 
-        for (int i = 0; i < this.values.size(); i++) {
-            sum += (this.getPercent(this.values.get(i)));
+        for (int i = 0; i < this.getValues().size(); i++) {
+            sum += (this.getPercent(this.getValues().get(i)));
         }
-        return sum / (this.values.size()-1);
+        return sum / (this.getValues().size()-1);
     }
     
     public Double getAnunualisedReturn() {
-        Double last = this.values.get(this.length()) / 1000;
-        double temp = ((last - 100) / 100) / this.length();
-        return  Arithmetic.redondear((temp * 12) * 100);
+        if(this.length() > 1) {
+            Double last = this.getValues().get(this.length()-1) / 1000;
+            Double temp = ((last - 100) / 100) / this.length();
+            return  Arithmetic.redondear((temp * 12) * 100 , 2);
+        } else {
+            return 0.0;
+        }
     }
     
     public Double getRatio() {
-        return (this.getAnunualisedReturn() - 0) / this.getIndex();
+        Double temp = Arithmetic.redondear((this.getAnunualisedReturn() - 0) / this.getIndex(), 2);
+        return temp;
     }
     
     public Double getMaximal(int j) {
-        Double max = this.values.get(0);
+        Double max = this.getValues().get(0);
         for (int i = 0; i < j; i++) {
-            if(this.values.get(i) > max){
-                max = this.values.get(i);
+            if(this.getValues().get(i) > max) {
+                max = this.getValues().get(i);
             }
         }
         return max;
@@ -70,8 +84,8 @@ public class Pain extends Metric{
     public Double getLargest() {
         Double large = 0.0;
         Double temp  = 0.0;
-        for (int i = 0; i < this.values.size(); i++) {
-            double actual = this.values.get(i);
+        for (int i = 0; i < this.getValues().size(); i++) {
+            double actual = this.getValues().get(i);
             if(actual > temp) {
                 large = Arithmetic.sumar(large, actual);
             }
@@ -79,19 +93,21 @@ public class Pain extends Metric{
         return large;
     }
     
-    public ArrayList<Double> getValues() {
-         return this.values;
+    public ArrayList<Double> getMonthlyValues() {
+        return this.getValues();
     }
     
-    public ArrayList<Double> getMonthlyValues() {
-        return this.values;
+    public Integer getInitialAccount() {
+        return this.initialAccount;
     }
+    
     private int length(){
-        return this.values.size() - 1;
+        return this.getValues().size() - 1;
     }
+    
     @Override
     public String toString(){
-         return "Pain => #"+(this.values.size()-1)+" Annualised Return: " + this.getAnunualisedReturn() + " Index: "+ this.getIndex() + " Ratio:"+this.getRatio();
+        return "Annualised Return: " + this.getAnunualisedReturn() + " Pain Index: "+ this.getIndex() + " Pain Ratio:"+this.getRatio() + " " + this.getValues().size();
     }  
 
     @Override

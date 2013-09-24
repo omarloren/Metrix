@@ -26,22 +26,19 @@ public class Gear {
     private Candle candle;
     private int lastMonth = 1;
     
-    public Gear(Settings settings) {
+    public Gear(Settings settings, Map<String, Object> it) {
         this.settings = settings;
         this.expert = new BSFF1_8_SV();
         //this.expert = new Prueba();
         this.symbol = this.settings.getSymbol();
         this.periodo = this.settings.getPeriod();
         this.candle = new Candle(this.periodo);
+        this.candle.setStrict(false);
         this.broker = new Broker(this.settings.getInitialWon());        
         this.expert.build(this.periodo).__construct(this.broker,Integer.valueOf(this.settings.getFrom()), this.symbol,this.settings.getPoint(), this.settings.getMagic());   
-    }
-    
-    public void rollOn(Map<String, Object> it) {
         Extern extern = new Extern(it);
         this.expert.setExtern(extern);
         this.expert.Init();
-        System.out.println("Iniciando interaccion: " + it);
     }
     
     public void tick(DBObject t) {
@@ -57,12 +54,13 @@ public class Gear {
         if (this.candle.isNew(Date.getMinutes())){
             this.broker.setOpenMin(open);
         }
+        
         for (int i = 0; i < arr.size(); i++) {
             Double bid =arr.get(i);
             Double ask = Arithmetic.sumar(bid, this.settings.getSpread());
             this.broker.bider(bid);
             this.broker.asker(ask);
-            this.expert.setBid(bid);
+            this.expert.setBid(bid);  
             this.expert.setAsk(ask);
             this.expert.onTick();
         }
@@ -96,6 +94,9 @@ public class Gear {
     }
     
     public void flush() {
+        
          MetricsController.flushMetrics(this.broker.getBalance());
+         this.broker = new Broker(this.settings.getInitialWon());
+         
     }
 }

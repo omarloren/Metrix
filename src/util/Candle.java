@@ -7,6 +7,7 @@ package util;
 public class Candle {
     private Integer lastMin = 0;
     private Integer p;
+    private Boolean strictMode = true;
     public Candle(Integer p){
         this.p = p;
     }
@@ -16,13 +17,17 @@ public class Candle {
      * @return 
      */
     public Boolean isNew(Integer min){
+        if(min == 0 && !this.strictMode) {
+            min = 60;
+        }
         //Cambios de hora malditos.
         if (min == 0 && lastMin == (60 - this.p)) {
             min = 60;
         }
+       // System.out.println(Date.dateToString() + " " + lastMin);
         /**
          * Compara la resta de la ultima apertura de minuto con el minuto actual
-         * y despues con el una operacion para saber si el mod corresponde a 0.
+         * y despues con el, una operacion para saber si el mod corresponde a 0.
          **/
         if ((min - lastMin) >= this.p && (min - (this.p * (min/this.p))) == 0) {
             lastMin = min;
@@ -34,5 +39,9 @@ public class Candle {
         } else {
             return false;
         }
+    }
+    
+    public void setStrict(boolean s){
+        this.strictMode = s;
     }
 }

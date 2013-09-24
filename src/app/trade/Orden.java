@@ -12,7 +12,7 @@ import util.Date;
 public class Orden extends Ordener {
     private Broker broker;
     private Double profitLoss = 0.0; //Ganancia o Perdida.
-    private Integer tickVal = 10000;
+    private Integer tickVal = 100000;
     private Integer date;
     private Integer hora;
     private String openTime = "null";
@@ -54,19 +54,19 @@ public class Orden extends Ordener {
     public Double getLossProfit(){
         Double temp = Arithmetic.restar(this.getClosePrice() , this.getOpenPrice());
         if (this.getSide() == '2') {
-            if (temp<0) {
+            if (temp < 0) {
                 temp = Math.abs(temp);
             } else {
                 temp *= -1;
             }
         }
-        return temp * this.tickVal;
+        return Arithmetic.redondear(temp * this.tickVal, 1);
     }
     
     @Override
     public String toString() {
-        return Date.dateToString()+" => #"+this.getID() + " " +this.getSideStr() 
+        return Date.dateToString()+" #"+this.getID() + " " +this.getSideStr() 
                 +" "+ this.getSymbol() +" a:" + this.getOpenPrice() + " SL:" +this.getSl() + " TP:" + 
-                this.getTp();
+                this.getTp() ;
     }
 }
