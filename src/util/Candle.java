@@ -35,10 +35,15 @@ public class Candle {
             if(lastMin == 60){
                 lastMin = 0;
             }
+            
             return true;
         } else {
             return false;
         }
+    }
+    
+    public void reset(){
+        //this.lastMin = 0;
     }
     
     public void setStrict(boolean s){

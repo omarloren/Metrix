@@ -19,13 +19,17 @@ public class Expert extends AbstractExpert{
         this.candle = new Candle(periodo);
         
         return this;
-    } 
+    }
     
     public void orderSend(Double lotes, Double sl, Double tp, Character side,Double price) {
         Orden orden = new Orden(this.getSymbol(), this.getMagic(),lotes,side,price);
         orden.setStopAndTake(sl, tp);
         orden.setBroker((Broker)this.getBrokeable());
         this.getBrokeable().sendOrder(orden);
+    }
+    
+    public Candle getCandle(){
+        return this.candle;
     }
     
     public void setExtern(Extern extern){

@@ -1,5 +1,12 @@
 package util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import trade.AbstractExpert;
+
 /**
  *
  * @author omar
@@ -69,6 +76,21 @@ public class Date {
         return getHora() + ":" + getMinutes();
     }
     
+    public static Integer dayOfWeek() {
+        Integer val = -1;
+        String format = "yyyyMMdd";
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        try {
+            java.util.Date date = df.parse(getDate());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            val = cal.get(Calendar.DAY_OF_WEEK);
+        } catch (ParseException ex) {
+            Logger.getLogger(AbstractExpert.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        
+        return val;
+    }
     public static String dateToString(){
         return getDate()+" " +fixTime(getHora()) + ":" + fixTime(getMinutes());
     }

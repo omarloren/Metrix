@@ -116,7 +116,6 @@ public class Broker extends Brokeable{
         }
     }
     
-    
     @Override
     public void ordenOpenCallback(Ordener o) {
         //System.out.println(" + Open  - " +(Orden)o);
@@ -125,7 +124,6 @@ public class Broker extends Brokeable{
     @Override
     public void orderCloseCallback(Ordener o) {
         Orden orden = (Orden) o;
-        
         //System.err.println(" - Close - " + Date.dateToString()+ " #"+o.getID() + " " + o.getClosePrice() + " " +  o.getReason() + " Profit:"+ orden.getLossProfit());
         this.ordersClosed.add(orden);
         this.balance += orden.getLossProfit();
@@ -217,6 +215,7 @@ public class Broker extends Brokeable{
     public Integer getWinTrades(){
         return this.winTrades;
     }
+    
     public Integer getLossTrades(){
         return this.lossTrades;
     }

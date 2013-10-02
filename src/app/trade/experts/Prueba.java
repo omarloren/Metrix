@@ -14,7 +14,7 @@ public class Prueba extends Expert implements IExpert{
     private BollingerBands b1;
     @Override
     public void Init() {
-       b1 = this.iBand(10);
+       b1 = this.iBand(78);
     }
 
     @Override
@@ -23,14 +23,15 @@ public class Prueba extends Expert implements IExpert{
        if(this.isTradeTime()) {
             System.out.println(this.getDate() + "-"+Date.horaToString() + " > " + " " +this);
             try {
-                Thread.sleep(100);
+                Thread.sleep(0);
             } catch (InterruptedException ex) {
                 Logger.getLogger(BSFF1_8_SV.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+    
     public Boolean isTradeTime(){
-        int c = this.getHora() + (this.getMinutes() /100);
+        int c = this.getHora() + (this.getMinutes() / 100);
         return (c < 1) && (c >= 0);
     }
     

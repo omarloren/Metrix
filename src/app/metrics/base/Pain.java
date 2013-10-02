@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import trade.Arithmetic;
 
 /**
- *
+ * M
  * @author omar
  */
 public class Pain extends Metric{
@@ -33,7 +33,6 @@ public class Pain extends Metric{
     
     private Double getPeakDrowDrawn() {
         Double sum = 0.0;
-        
         for (int i = 0; i < this.getValues().size(); i++) {
             Double max = this.getMaximal(i);
             if(this.getValues().get(i) / max - 1 < 0) {
