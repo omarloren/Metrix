@@ -5,7 +5,6 @@ import app.metrics.base.Metric;
 import app.metrics.base.Pain;
 import java.util.ArrayList;
 import trade.Arithmetic;
-import util.Date;
 
 /**
  *  TODO: HACER TODO ESTO NO-ESTATICO, PARA QUE PODAMOS CONTRUIR METRICS A PARTIR
@@ -89,16 +88,19 @@ public class MetricsController {
                          _short = month.getMonthlyAvg();
                          break;
                  }
-            }
+            } 
         }
         return Arithmetic.redondear( (_short /_long), 4);
     }
     
-    public static Pain getPain(){
+    public static Pain getPain(String id){
         Pain p = null;
         for (int i = 0; i < metricsPool.size(); i++) {
-            if(metricsPool.get(i).getId().equals("PAIN")) {
-                p = (Pain)metricsPool.get(i);
+            if(metricsPool.get(i).getClass() == Pain.class) {
+                
+                if(metricsPool.get(i).getId().equals(id)) {
+                    p = (Pain)metricsPool.get(i);
+                }
             }
         }
         return p;

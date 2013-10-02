@@ -48,14 +48,14 @@ public class Gear {
         try {
             Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
-            //Thread.sleep(10);
             Double open = arr.get(0);
             if(Date.getMonth() != this.lastMonth) {
                 this.lastMonth = Date.getMonth();
                 MetricsController.refresh(Date.getDate(),this.broker.getBalance());
             }
             this.expert.setOpenMin(open);
-            if (this.candle.isNew(Date.getMinutes()) /*|| this.isABeatifulDay(Date.getDay())*/){
+            this.isABeatifulDay(Date.getDay());
+            if (this.candle.isNew(Date.getMinutes())){
                 this.broker.setOpenMin(open);
             }
             
@@ -88,7 +88,8 @@ public class Gear {
         
         /**
          * Por alguna razón MT da como segundo tick el LOW si es que el HIGH y el
-         * CLOSE son iguales, sino el HIGH es primero. Además Genera ticks 
+         * CLOSE son iguales, sino el HIGH es primero. Además Genera ticks falsos 
+         * si es que una vela tiene o == h && l == c.
          */
         if(Arithmetic.equals(h, c) && !Arithmetic.equals(h, l) && !Arithmetic.equals(o, l) &&
                 !Arithmetic.equals(o, h)){
@@ -128,12 +129,8 @@ public class Gear {
                 base = r.get(i);
             }
         }
+        //r nunca debería de ser mayor a 4
         assert r.size() <= 4;
-        /*if(Date.getDate().equals("20081218")){
-            System.out.println(Date.dateToString() + " " +r + " >>> O:" +  e.get("OPEN") + " H:" +e.get("HIGH") + " L:" + e.get("LOW") + " C:" +  e.get("CLOSE")); 
-        }*/
-        
-        //System.out.println(Date.dateToString() + " " +r + " >>> O:" +  e.get("OPEN") + " H:" +e.get("HIGH") + " L:" + e.get("LOW") + " C:" +  e.get("CLOSE")); 
         return r;
     }
     

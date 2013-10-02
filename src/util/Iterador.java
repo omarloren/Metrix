@@ -8,7 +8,6 @@ import java.util.Set;
 
 /**
  * Clase que genera las iteraciones que se correrán para una prueba.
- * posible de variables.
  * @author omar
  */
 public class Iterador {
@@ -29,8 +28,8 @@ public class Iterador {
             }
             this._collection.add(temp);
         }
-        System.out.println(values);
         this.generate(0, this._collection, "");
+        System.out.println(this.values);
     }
     
     public Integer getSize(){
@@ -52,6 +51,16 @@ public class Iterador {
     public Boolean hasNext() {
         return this.hasNext;
     }
+    
+    public String toString(Map<String, Object> i){
+        Set<String> set = i.keySet();
+        String s = " ";
+        for (String key : set) {
+            s += i.get(key) +", ";
+        }
+        return s.substring(0, s.length() - 2) + "\n";
+    }
+    
     /**
      * MÉTODO RECURSIVO: Que genera todas las posibles combinaciones entre un rango
      * de variables, en este caso esas variables estan en el ArrayList _collection

@@ -225,6 +225,6 @@ public class Broker extends Brokeable{
     }
     @Override
     public String toString(){
-         return " | Trades:"+ this.totalTrades+" | Balance: "+ this.getBalance() + " | Relative DrowDown:"+Arithmetic.redondear(this.drowDown,3) + " Profit:"+this.getProfit();
+         return this.totalTrades+", "+Arithmetic.redondear(this.drowDown,3) + " ,"+this.getProfit();
     }    
 }

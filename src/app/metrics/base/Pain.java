@@ -106,7 +106,7 @@ public class Pain extends Metric{
     
     @Override
     public String toString(){
-        return "Annualised Return: " + this.getAnunualisedReturn() + " Pain Index: "+ this.getIndex() + " Pain Ratio:"+this.getRatio() + " " + this.getValues().size();
+        return ""+ this.getId() + ", " +this.getIndex() + ", " + this.getRatio();
     }  
 
     @Override

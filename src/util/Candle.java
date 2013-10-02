@@ -24,7 +24,6 @@ public class Candle {
         if (min == 0 && lastMin == (60 - this.p)) {
             min = 60;
         }
-       // System.out.println(Date.dateToString() + " " + lastMin);
         /**
          * Compara la resta de la ultima apertura de minuto con el minuto actual
          * y despues con el, una operacion para saber si el mod corresponde a 0.

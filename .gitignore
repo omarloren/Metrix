@@ -3,3 +3,4 @@ manifest.mf
 /lib/*.jar
 /data/*
 /build/
+/config/

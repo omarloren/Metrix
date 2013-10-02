@@ -84,15 +84,6 @@ public class BSFF1_8_SV extends Expert implements IExpert{
             this.bollDif = this.bollDif();
             this.contVelas++;
         }
-        /*if(Date.getDate().equals("20081226")){
-            try {
-                Thread.sleep(10);
-                System.out.println(this.getAsk() + " " +Date.dateToString() + ": " + this.getOpenMin()+" || "+this.bollUp+" => "+this.b1.getUpperBand() + " " + this.b2.getUpperBand() +" " + this.b3.getUpperBand());
-                //System.out.println(this.getBid() + " " +Date.dateToString() + ": " + this.getOpenMin()+" || "+this.bollDn+" => "+this.b1.getLowerBand() + " " + this.b2.getLowerBand() +" " + this.b3.getLowerBand());
-            } catch (InterruptedException ex) { 
-                Logger.getLogger(BSFF1_8_SV.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }*/
         
         if(this.isTradeTime() && this.bollDif < this.bollXUp && this.bollDif > this.bollXDn &&
                 this.ordersBySymbol() < this.limiteCruce ) {
