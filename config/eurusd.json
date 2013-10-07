@@ -5,7 +5,7 @@
     "spread" : 3,
     "initialWon" : 100000,
     "metrics": {
-      "break" : 20080901,      
+      "break" : 20120101,      
       "pain-i" : true,     
       "pain-r" : true,     
       "relative-dd" : true,
@@ -13,7 +13,7 @@
     },
     "date" : { 
         "from" : 20080101,
-        "to" : 20090101
+        "to" : 20130801
     },
     "externs" : {
         "lots" : {
@@ -103,7 +103,7 @@
         },
         "num_velas_salida" : {
                 "start" : 150,
-                "step" : 150,
+                "step" : 0,
                 "stop" : 300	
         },
         "limiteCruce" : {

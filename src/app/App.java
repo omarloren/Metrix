@@ -30,6 +30,8 @@ public class App {
     private Gear gear;
     public static String _break; //Malditas palabras reservadas
     public Excel file;
+    private Integer from;
+    private Integer to;
     
     public App() {
         this.inputs = Inputs.getInstance();
@@ -43,7 +45,8 @@ public class App {
             MetricsController.newIR("LONG", this.settings.getFrom(), _break);
             MetricsController.newIR( "SHORT", _break, this.settings.getTo());
             this.file = new Excel(this.settings.getSymbol());
-            
+            this.from = Integer.parseInt(this.settings.getFrom());
+            this.to = Integer.parseInt(this.settings.getTo());
         } catch (SettingNotFound ex) {
             System.out.println(ex);
         }
@@ -56,7 +59,7 @@ public class App {
         System.out.println("Iniciando prueba " + this.iterador.getSize());
         while (this.iterador.hasNext()) {
             iteracion = this.iterador.next();
-            this.gear = new Gear(this.settings, iteracion);
+            this.gear = new Gear(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
             
             while (this.testData.hasNext()) {
@@ -66,11 +69,12 @@ public class App {
             
             Broker broker = this.gear.getBroker();
             MetricsController.refresh(Date.getDate(), broker.getBalance());
+            broker.reset();
             Double ir = MetricsController.getIR();
             Pain painS = MetricsController.getPain("SHORT");
             Pain painL = MetricsController.getPain("LONG");
-            
-            str = cont + ", " + broker + ", " + ir + ", " + painS +"," + painL + ","+ this.iterador.toString(iteracion);
+            str = cont + ", " +ir + ", , "+ broker.getLongProfit() + ", "+broker.getLongTrades() + ", "+ broker.getLongRelative() + ", " + painS + " , ,";
+            str +=  broker.getProfit() + ", "+broker.getTotalTrades() + ", "+ broker.getDrowDown() + ", "+ painL + ","+ this.iterador.toString(iteracion);
             System.err.println("#"+cont+" "+str );
             this.file.addData(str);
             this.gear.flush();
@@ -81,7 +85,7 @@ public class App {
         for(Map.Entry<String, Object> head : iteracion.entrySet()){
             headers += head.getKey() + ",";
         }
-        this.file.setHeader("Pass, Trades, Relative, Profit, IR, Pain, Pain Index, Pain Ratio, Pain, Pain Index, Pain ratio, "+headers + "\n");
+        this.file.setHeader("Pass, IR, LONG ->, Profit, Trades, Relative, Pain Index, Pain Ratio, Short ->, Profit, Trades, Relative, Pain Index, Pain Ratio, "+headers + "\n");
     }
     
     /**
@@ -95,6 +99,5 @@ public class App {
         App app = new App();
         app.run();
         app.theEnd();
-        
     }
 }

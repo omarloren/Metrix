@@ -4,3 +4,4 @@ manifest.mf
 /data/*
 /build/
 /config/
+./*.csv

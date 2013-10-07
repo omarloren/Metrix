@@ -2,6 +2,7 @@ package app.metrics.base;
 
 import java.util.ArrayList;
 import trade.Arithmetic;
+import util.Date;
 
 /**
  * M
@@ -16,6 +17,7 @@ public class Pain extends Metric{
         this.initialAccount = initialAccount;
         this.getValues().add(initialAccount.doubleValue());
         this.setFlush(true);
+        
     }
     
     @Override
@@ -106,12 +108,7 @@ public class Pain extends Metric{
     
     @Override
     public String toString(){
-        return ""+ this.getId() + ", " +this.getIndex() + ", " + this.getRatio();
-    }  
-
-    @Override
-    public Boolean isActive(String date) {
-        return true;
+        return this.getIndex() + ", " + this.getRatio();
     }
 
     @Override

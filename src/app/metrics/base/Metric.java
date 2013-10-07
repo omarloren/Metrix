@@ -16,10 +16,12 @@ public abstract class Metric {
     private String to;
     //Si este metrico soporta flushing.
     private Boolean flushing = false;
+    private Boolean refresh = true;
     //Identificador de el metrico
     private String id = "";
     //Ultimo valor.
     Double lastValue = -1.0;
+    
     
     public Metric(String id, String from, String to){
         this.id = id;
@@ -48,11 +50,19 @@ public abstract class Metric {
         return this.flushing;
     }
     
+    public Boolean canRefresh(){
+        return this.refresh;
+    }
+    
     public Metric setFlush(Boolean b){
         this.flushing = b;
         return this;
     }
     
+    public Metric setRefresh(Boolean b){
+        this.refresh = b;
+        return this;
+    }
     public ArrayList<Double> getValues() {
         return this.values;
     }
@@ -64,8 +74,19 @@ public abstract class Metric {
     public void setLastValue(Double lastValue) {
         this.lastValue = lastValue;
     }
+    
+   public Boolean isActive(String date) {
+        Integer f = Integer.parseInt(this.getFrom());
+        Integer t = Integer.parseInt(this.getTo());
+        Integer d = Integer.parseInt(date);
+        Boolean b = false;
+        if(d >= f && d < t) {
+            b = true;
+        }
+        return b;
+    }
+   
     public abstract void feed(Double val);
     
-    public abstract Boolean isActive(String date);
     public abstract Boolean isNew();
 }

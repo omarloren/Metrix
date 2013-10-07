@@ -40,16 +40,4 @@ public class Monthly extends Metric{
     public String toString(){
         return " Months => #"+this.getValues().size()+" From: "+this.getFrom() + " To:"+this.getTo() + " Monthly:"+this.getMonthlyAvg();
     }
-
-    @Override
-    public Boolean isActive(String date) {
-        Integer from = Integer.parseInt(this.getFrom());
-        Integer to = Integer.parseInt(this.getTo());
-        Integer d = Integer.parseInt(date);
-        Boolean b = false;
-        if(d >= from && d < to) {
-            b = true;
-        }
-        return b;
-    }
 }

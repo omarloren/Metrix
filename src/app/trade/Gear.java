@@ -27,8 +27,11 @@ public class Gear {
     private Candle candle;
     private int lastDay = 0;
     private int lastMonth = 1;
+    private Integer from;
+    private Integer _break;
+    private Integer to;
     
-    public Gear(Settings settings, Map<String, Object> it) {
+    public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
         this.settings = settings;
         this.expert = new BSFF1_8_SV();
         //this.expert = new Prueba();
@@ -38,10 +41,13 @@ public class Gear {
         this.candle.setStrict(false);
         this.broker = new Broker(this.settings.getInitialWon());        
         this.broker.setSpread(this.settings.getSpread());
-        this.expert.build(this.periodo).__construct(this.broker,Integer.valueOf(this.settings.getFrom()), this.symbol,this.settings.getPoint(), this.settings.getMagic());   
+        this.expert.build(this.periodo).__construct(this.broker, from, this.symbol,this.settings.getPoint(), this.settings.getMagic());   
         Extern extern = new Extern(it);
         this.expert.setExtern(extern);
         this.expert.Init();
+        this.from = from;
+        this._break = _break;
+        this.to = to;
     }
     
     public void tick(DBObject t) {
@@ -51,7 +57,15 @@ public class Gear {
             Double open = arr.get(0);
             if(Date.getMonth() != this.lastMonth) {
                 this.lastMonth = Date.getMonth();
+                /**
+                 * TODO - Cambiar el tipo de dato de refresh para no castear de mas
+                 * el Date.
+                 */
                 MetricsController.refresh(Date.getDate(),this.broker.getBalance());
+                Integer d = Integer.parseInt(Date.getDate());
+                if(d >= this._break && d < this.to){
+                    this.broker.reset();
+                }
             }
             this.expert.setOpenMin(open);
             this.isABeatifulDay(Date.getDay());

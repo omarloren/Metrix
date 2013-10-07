@@ -31,7 +31,7 @@ public class MetricsController {
         
         for (int i = 0; i < metricsPool.size(); i++) {
             Metric m = metricsPool.get(i);
-            if(m.isActive(date)) {
+            if(m.isActive(date) && m.canRefresh()) {
                 if(m.isNew()) {
                     m.setLastValue(lastValue);
                 }

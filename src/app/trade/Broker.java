@@ -39,6 +39,11 @@ public class Broker extends Brokeable{
     private Double lossPercent;
     private Double Bid;
     private Double Ask;
+
+    private Double longRelative = -1.0;
+
+    private Integer longTrades = -1;
+    private Double longProfit;
     
     public Broker(Integer initialDeposit){
         super();
@@ -52,6 +57,17 @@ public class Broker extends Brokeable{
     @Override
     public void setOpenMin(Double d) {
         this.indicatorController.setOpenMinute(d);
+    }
+    
+    public void reset(){
+        if(this.longTrades == -1 && this.longRelative == -1){
+            this.longRelative = this.drowDown;
+            this.longTrades = this.totalTrades;
+            this.longProfit = this.getProfit();
+            this.drowDown = 0.0;
+            this.balance = this.initialDeposit.doubleValue();
+            this.totalTrades = 0;
+        }
     }
     
     /**
@@ -174,6 +190,11 @@ public class Broker extends Brokeable{
         //System.out.println(this);
     }
     
+    
+    public Broker setLongRelative(Double rel) {
+        this.longRelative = rel;
+        return this;
+    }
     /**
      * Obtenemos el total de ordenes de la prueba.
      * @return 
@@ -223,8 +244,15 @@ public class Broker extends Brokeable{
     public Integer getTotalTrades(){
         return this.totalTrades;
     }
-    @Override
-    public String toString(){
-         return this.totalTrades+", "+Arithmetic.redondear(this.drowDown,3) + " ,"+this.getProfit();
-    }    
+    public Integer getLongTrades()  {
+        return this.longTrades;
+    }
+    
+    public Double getLongProfit() {
+        return this.longProfit;
+    }
+    
+    public Double getLongRelative() {
+        return this.longRelative;
+    }
 }
