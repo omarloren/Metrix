@@ -13,7 +13,8 @@ public class Orden extends Ordener {
     private Broker broker;
     private Double profitLoss = 0.0; //Ganancia o Perdida.
     private Integer tickVal = 100000;
-    private Integer date;
+    private String date;
+    public Integer weekDay;
     private Integer hora;
     private String openTime = "null";
     private String closeTime = "null";
@@ -21,18 +22,26 @@ public class Orden extends Ordener {
     public Orden(String symbol,Integer magic, Double lotes, Character side, Double price){
         super(symbol,lotes,side,price);
         this.setMagic(magic);
+        this.date = Date.getDate();
+        this.weekDay = Date.dayOfWeek();
+        this.openTime = Date.dateToString();
     }
     
     public Orden setBroker(Broker broker) {
         this.broker = broker;
         return this;
     }
+    
+    public String getOpenTime(){
+        return this.openTime;
+    }
+    
     /**
      * Marcamos posicion como cerrada.
      * @param time
      * @param close 
      */
-    public void close(Double close){
+    public void close(Double close) {
         this.setClosePrice(close);
         this.setActive(false);
         this.broker.closeOrder(this);
@@ -49,10 +58,28 @@ public class Orden extends Ordener {
         this.closeTime = Date.horaToString();
         this.broker.closeOrder((Ordener)this);
     }
-   
+    /**
+     * Calculamos el 
+     * @return 
+     */
+    public Double getSwap() {
+        Double swap = 0.0;
+        if(!this.date.equals(Date.getDate()) && Date.dayOfWeek() != 1){
+            if(this.getSide() == '1') {
+                swap = 3.20;
+            } else {
+                swap = 7.40;
+            }
+            if(Date.dayOfWeek() == 5){
+                swap *= 3;
+            }
+        } 
+        return Arithmetic.redondear(swap, 2);   
+    }
     
     public Double getLossProfit(){
         Double temp = Arithmetic.restar(this.getClosePrice() , this.getOpenPrice());
+        Double res;
         if (this.getSide() == '2') {
             if (temp < 0) {
                 temp = Math.abs(temp);
@@ -60,7 +87,11 @@ public class Orden extends Ordener {
                 temp *= -1;
             }
         }
-        return Arithmetic.redondear(temp * this.tickVal, 1);
+       
+       res= (temp * this.tickVal) - this.getSwap();
+       
+        
+        return Arithmetic.redondear(res, 2);
     }
     
     @Override

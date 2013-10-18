@@ -36,8 +36,8 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     private Double bollDif;
     private Integer velasSalida;
     private Integer limiteCruce;
-    private Integer horaIni;
-    private Integer horaFin;
+    private Double horaIni;
+    private Double horaFin;
     private Integer contVelas = 0;
     
     /**
@@ -53,18 +53,22 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         bs1 = this.iBand(this.extern.getInteger("periodoBollSalida"));
         bs2 = this.iBand(this.extern.getInteger("periodoBollSalida2"));
         bs3 = this.iBand(this.extern.getInteger("periodoBollSalida3"));
+        
         bx1 = this.iBand(this.extern.getInteger("XBoll"));
         bx2 = this.iBand(this.extern.getInteger("XBoll2"));
         bx3 = this.iBand(this.extern.getInteger("XBoll3"));
+        
         bollXDn = this.extern.getDouble("bollXDn") ;
         bollXUp = this.extern.getDouble("bollXUp") ;
+        
         sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
         tp = Arithmetic.multiplicar(this.extern.getInteger("tp").doubleValue() , this.getPoint());
         bollSpecial = this.extern.getDouble("bollspecial") ;
         velasSalida = this.extern.getInteger("num_velas_salida");
         limiteCruce = this.extern.getInteger("limiteCruce");
-        horaIni = this.extern.getInteger("horainicial");
-        horaFin = this.extern.getInteger("horafinal");
+        horaIni = this.extern.getDouble("horainicial");
+        horaFin = this.extern.getDouble("horafinal");
+        
         this.bollUp = this.bollUp();
         this.bollDn = this.bollDn();
         this.bollUpS = this.bollUpS();
@@ -76,7 +80,6 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     public void onTick() {
         
         if(this.isNewCandle()) {
-            
             this.bollUp = this.bollUp();
             this.bollDn = this.bollDn();
             this.bollUpS = this.bollUpS();
@@ -108,6 +111,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
                 
                 if(o.getSide() == '2') {
                     if(this.getOpenMin() <= this.bollDnS) {
+                       //System.out.println(this.getOpenMin()+ " "+this.bollDnS);
                         o.close(this.getAsk(), "Cierre por bollinger");
                        
                     } else if(this.contVelas >= this.velasSalida) {
@@ -135,7 +139,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * @return 
      */
     public Boolean isTradeTime(){
-        int c = this.getHora() + (this.getMinutes() /100);
+        double c = (this.getHora() + (this.getMinutes()*0.01)) + (this.getMinutes() /100);
         return (c < this.horaFin) && (c >= this.horaIni) && this.isReady();
     }
     
@@ -145,16 +149,16 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      */
     public Double bollUp() {
         
-        return Arithmetic.redondear((this.b1.getUpperBand() + this.b2.getUpperBand() + 
-                            this.b3.getUpperBand())/3, 7);
+        return (this.b1.getUpperBand() + this.b2.getUpperBand() + 
+                            this.b3.getUpperBand())/3;
     }
     /**
      * Promedio Entrada de compras.
      * @return 
      */
     private Double bollDn() {
-        return Arithmetic.redondear((this.b1.getLowerBand() + this.b2.getLowerBand() +
-                            this.b3.getLowerBand())/3, 7);
+        return (this.b1.getLowerBand() + this.b2.getLowerBand() +
+                            this.b3.getLowerBand())/3;
     }
     
      /**
@@ -182,6 +186,6 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     
     @Override
     public String toString(){
-        return Date.dateToString()+" "+this.getOpenMin()  +" ==> BollUp:"+this.bollUp + " BollDn:"+this.bollDn;
+        return Date.dateToString()+" "+this.getOpenMin()  +" ==> BollUpS:"+this.bollUpS + " BollDnS:"+this.bollDnS;
     }
 }

@@ -14,14 +14,14 @@ public class Prueba extends Expert implements IExpert{
     private BollingerBands b1;
     @Override
     public void Init() {
-       b1 = this.iBand(78);
+       b1 = this.iBand(5);
     }
 
     @Override
     public void onTick() {
         
-       if(this.isTradeTime()) {
-            System.out.println(this.getDate() + "-"+Date.horaToString() + " > " + " " +this);
+       if(this.isTradeTime() && this.isNewCandle()) {
+            System.out.println(this.getDate() + "-"+Date.horaToString() + " > " + " " +this.b1.values);
             try {
                 Thread.sleep(0);
             } catch (InterruptedException ex) {

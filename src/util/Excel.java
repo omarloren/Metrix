@@ -22,6 +22,7 @@ public class Excel {
     }
     
     public void addData(String str) {
+       // System.out.println(str);
         this.values.add(str);
     }
     public void setHeader(String header){

@@ -20,7 +20,7 @@ public class Gear {
     
     private Broker broker;
     private BSFF1_8_SV expert;
-    //private Prueba expert;
+   // private Prueba expert;
     private Settings settings;    
     private String symbol;
     private Integer periodo;
@@ -63,16 +63,17 @@ public class Gear {
                  */
                 MetricsController.refresh(Date.getDate(),this.broker.getBalance());
                 Integer d = Integer.parseInt(Date.getDate());
-                if(d >= this._break && d < this.to){
+                if(d >= this._break && d < this.to) {
                     this.broker.reset();
                 }
             }
+            
             this.expert.setOpenMin(open);
-            this.isABeatifulDay(Date.getDay());
-            if (this.candle.isNew(Date.getMinutes())){
+            //this.isABeatifulDay(Date.getDay());
+            
+            if (this.candle.isNew(Date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
-            
             for (int i = 0; i < arr.size(); i++) {
                 Double bid =arr.get(i);
                 Double ask = Arithmetic.sumar(bid, this.settings.getSpread());
@@ -84,6 +85,8 @@ public class Gear {
         } catch (Exception ex) {
             Logger.getLogger(Gear.class.getName()).log(Level.SEVERE, null, ex);
         }
+        long endTime = System.nanoTime();
+        //System.err.println("Tiempo del ciclo: "+(endTime - startTime));
     }
     
     /**
@@ -94,46 +97,11 @@ public class Gear {
      */
     private ArrayList<Double> evaluate(DBObject e) {
         ArrayList<Double> r = new ArrayList();
-        Double o = (Double)e.get("OPEN");
-        Double h = (Double)e.get("HIGH");
-        Double l = (Double)e.get("LOW");
-        Double c = (Double)e.get("CLOSE");
-        Double abs = Arithmetic.redondear(Math.abs(o-c)) * 10000;
-        
-        /**
-         * Por alguna razón MT da como segundo tick el LOW si es que el HIGH y el
-         * CLOSE son iguales, sino el HIGH es primero. Además Genera ticks falsos 
-         * si es que una vela tiene o == h && l == c.
-         */
-        if(Arithmetic.equals(h, c) && !Arithmetic.equals(h, l) && !Arithmetic.equals(o, l) &&
-                !Arithmetic.equals(o, h)){
-            r.add(o);
-            r.add(l);
-            r.add(h);
-        } else if(Arithmetic.equals(o, h) && Arithmetic.equals(l, c) && (abs > 0)){
-            double d = Arithmetic.redondearUp(((o+l)/2), 4);
-            r.add(o);
-            r.add(d);
-            r.add(Arithmetic.redondearUp(((d+l)/2), 4));
-        }else if(Arithmetic.equals(o, l) && Arithmetic.equals(h, c) && (abs > 0)){
-            if(!(abs >= 2)){
-               r.add(o);
-               r.add(Arithmetic.redondear(o+ 0.0001)); 
-            } else if(abs == 3){
-                r.add(o);
-                r.add(Arithmetic.redondear(o+ 0.0001)); 
-                
-            } else {
-                Double rel = abs / 3;
-                r.add(o);
-                r.add(Arithmetic.redondear(o+(rel*0.0001)));
-            }
-        } else {
-            r.add(o);
-            r.add(h);
-            r.add(l);
-        }
-        r.add(c);
+        r.add((Double)e.get("OPEN"));
+        r.add((Double)e.get("HIGH"));
+        r.add((Double)e.get("LOW"));
+        r.add((Double)e.get("CLOSE"));
+       
         Double base = r.get(0);
         for (int i = 1; i < r.size(); i++) {   
             if(Double.compare(base , r.get(i)) == 0){
@@ -143,8 +111,6 @@ public class Gear {
                 base = r.get(i);
             }
         }
-        //r nunca debería de ser mayor a 4
-        assert r.size() <= 4;
         return r;
     }
     
@@ -162,12 +128,12 @@ public class Gear {
      * @return 
      */
     private Boolean isABeatifulDay(int day){
-        if(this.lastDay != day){
+        if(this.lastDay != day) {
             this.lastDay = day;
             //Candler vuelve a s estado inicial.
             this.expert.getCandle().reset();
             return true;
-        }else{
+        } else {
             return false;
         }
     }
