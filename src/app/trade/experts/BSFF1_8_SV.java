@@ -1,10 +1,12 @@
 package app.trade.experts;
 
 import app.trade.Orden;
-import help.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import trade.Arithmetic;
 import trade.IExpert;
 import trade.indicator.base.BollingerBands;
+import util.Date;
 
 /**
  * BSFF1_8_SV -> Bollinger Sin FIFO 1.8 Salida de Ventas.
@@ -66,6 +68,12 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         limiteCruce = this.extern.getInteger("limiteCruce");
         horaIni = this.extern.getDouble("horainicial");
         horaFin = this.extern.getDouble("horafinal");
+        
+        this.bollUp = this.bollUp();
+        this.bollDn = this.bollDn();
+        this.bollUpS = this.bollUpS();
+        this.bollDnS = this.bollDnS();
+        this.bollDif = this.bollDif();
     }
     
     @Override

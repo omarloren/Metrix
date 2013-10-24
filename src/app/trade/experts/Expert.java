@@ -1,14 +1,11 @@
 package app.trade.experts;
 
-import app.indicator.iBand;
-import app.indicator.iController;
 import app.trade.Broker;
 import app.trade.Extern;
 import app.trade.Orden;
-import help.Candle;
-import help.Date;
 import trade.AbstractExpert;
-
+import util.Date;
+import util.Candle;
 /**
  *
  * @author omar
@@ -39,15 +36,11 @@ public class Expert extends AbstractExpert{
         this.extern = extern;
     }
     
-    public iBand newBand(Integer n){
-        return iController.newBand(this.getSymbol(), this.getPeriod(), n);
-    }
-    
     @Override
     public int getSeconds() {
         throw new UnsupportedOperationException("Es un tester de minutos, no sé lo que es un segundo :(");
     }
-    
+
     @Override
     public int getMinutes() {
         return Date.getMinutes();

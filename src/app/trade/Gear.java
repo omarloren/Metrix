@@ -1,33 +1,26 @@
 package app.trade;
 
-import app.indicator.Factory;
-import app.indicator.iBand;
-import app.indicator.iController;
 import app.metrics.MetricsController;
 import app.trade.experts.BSFF1_8_SV;
 import com.mongodb.DBObject;
-import help.Candle;
-import help.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import trade.Arithmetic;
-import trade.indicator.IndicatorController;
 import util.Settings;
+import util.Date;
+import util.Candle;
 
 /**
  *
  * @author omar
  */
-public class Gear extends Thread{
+public class Gear {
     
     private Broker broker;
-    public int id;
     private BSFF1_8_SV expert;
-    //private Prueba expert;
+   // private Prueba expert;
     private Settings settings;    
     private String symbol;
     private Integer periodo;
@@ -37,16 +30,9 @@ public class Gear extends Thread{
     private Integer from;
     private Integer _break;
     private Integer to;
-    private Integer cont;
-    public static Factory factory;
-    private HashMap<String, List> bollsMap = new HashMap();
-            
+    
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
         this.settings = settings;
-        this.from = from;
-        this._break = _break;
-        this.to = to;
-        factory = new Factory(this.from);
         this.expert = new BSFF1_8_SV();
         //this.expert = new Prueba();
         this.symbol = this.settings.getSymbol();
@@ -55,35 +41,13 @@ public class Gear extends Thread{
         this.candle.setStrict(false);
         this.broker = new Broker(this.settings.getInitialWon());        
         this.broker.setSpread(this.settings.getSpread());
-        this.expert.build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());   
+        this.expert.build(this.periodo).__construct(this.broker, from, this.symbol,this.settings.getPoint(), this.settings.getMagic());   
         Extern extern = new Extern(it);
         this.expert.setExtern(extern);
         this.expert.Init();
-        //this.loadData();
-        this.cont = 0;
-    }
-    public void setId(int id){
-        this.id = id;
-    }
-    private void loadData(){
-        ArrayList arr = iController.indPool;
-        for (int i = 0; i < arr.size(); i++) {
-            iBand b = (iBand)arr.get(i);
-            List l = factory.newBollinger(b.getSymbol(), b.getPeriod(), b.getN());
-            this.bollsMap.put(b.getId(), l);
-        }
-    }
-    
-    private void refreshData() {
-        try{
-            for (Map.Entry<String, List> entry : this.bollsMap.entrySet()) {
-                HashMap<String, Object> h = (HashMap<String, Object>) entry.getValue().get(this.cont);
-                iController.refresh(entry.getKey(), h);
-            }
-        }catch(Exception e){
-            System.err.println(Date.dateToString());
-        }
-        cont++;
+        this.from = from;
+        this._break = _break;
+        this.to = to;
     }
     
     public void tick(DBObject t) {
@@ -91,24 +55,23 @@ public class Gear extends Thread{
             Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
             Double open = arr.get(0);
-            
             if(Date.getMonth() != this.lastMonth) {
                 this.lastMonth = Date.getMonth();
-               
+                /**
+                 * TODO - Cambiar el tipo de dato de refresh para no castear de mas
+                 * el Date.
+                 */
                 MetricsController.refresh(Date.getDate(),this.broker.getBalance());
                 Integer d = Integer.parseInt(Date.getDate());
-                try{
-                    if(d >= this._break && d < this.to) {
-                        this.broker.reset();
-                    }
-                } catch(Exception e){
-                    System.out.println(d + " " +this._break +" "+this.to );
-                }                
+                if(d >= this._break && d < this.to) {
+                    this.broker.reset();
+                }
             }
-            this.expert.setOpenMin(open);            
             
-            if (this.candle.isNew(Date.getMinutes())) {   
-                //this.refreshData();
+            this.expert.setOpenMin(open);
+            //this.isABeatifulDay(Date.getDay());
+            
+            if (this.candle.isNew(Date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
             for (int i = 0; i < arr.size(); i++) {
@@ -117,13 +80,13 @@ public class Gear extends Thread{
                 this.broker.ticker(bid);
                 this.expert.setBid(bid);  
                 this.expert.setAsk(ask);
-                //if(this.expert.isTradeTime() || !this.broker.getOrders().isEmpty()){
-                    this.expert.onTick();
-                //}
+                this.expert.onTick();
             }
         } catch (Exception ex) {
             Logger.getLogger(Gear.class.getName()).log(Level.SEVERE, null, ex);
         }
+        long endTime = System.nanoTime();
+        //System.err.println("Tiempo del ciclo: "+(endTime - startTime));
     }
     
     /**
@@ -159,7 +122,6 @@ public class Gear extends Thread{
          MetricsController.flushMetrics(this.broker.getBalance());
          this.broker = new Broker(this.settings.getInitialWon()); 
     }
-    
     /**
      * Devuelve si un día es hermoso, o nuevo, o algo. 
      * @param day
