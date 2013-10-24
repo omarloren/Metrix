@@ -147,7 +147,7 @@ public class Data {
         }
         r.put("CLOSE",c);
         
-        return e;
+        return r;
     }
     /**
      * Convierte un string a su objecto correspondiente (Soporta Integers, 
@@ -172,8 +172,8 @@ public class Data {
         return r;
     }
     
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         Data data = new Data("EURUSD");
         data.buildFile();
-    }*/
+    }
 }
