@@ -3,9 +3,10 @@ package app.trade.experts;
 import app.trade.Broker;
 import app.trade.Extern;
 import app.trade.Orden;
+import help.Candle;
+import help.Date;
 import trade.AbstractExpert;
-import util.Date;
-import util.Candle;
+;
 /**
  *
  * @author omar
