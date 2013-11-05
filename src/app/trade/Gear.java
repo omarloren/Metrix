@@ -5,6 +5,8 @@ import app.trade.experts.BSFF1_8_SV;
 import com.mongodb.DBObject;
 import help.Candle;
 import help.Date;
+import io.Exceptions.SettingNotFound;
+import io.Inputs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import trade.Arithmetic;
-import trade.indicator.IndicatorController;
 import util.Settings;
 
 /**
@@ -34,10 +35,13 @@ public class Gear extends Thread{
     private Integer from;
     private Integer _break;
     private Integer to;
+    private Inputs inputs;
     private Integer cont;
+    private Boolean metrics;
     private HashMap<String, List> bollsMap = new HashMap();
             
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
+        this.inputs = Inputs.getInstance();
         this.settings = settings;
         this.from = from;
         this._break = _break;
@@ -56,6 +60,11 @@ public class Gear extends Thread{
         this.expert.Init();
         //this.loadData();
         this.cont = 0;
+        try {
+            this.metrics = Boolean.getBoolean(this.inputs.getInput("metrics"));
+        } catch (SettingNotFound ex) {
+            Logger.getLogger(Gear.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     public void setId(int id){
         this.id = id;
@@ -66,11 +75,10 @@ public class Gear extends Thread{
         try {
             Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
-            Double open = arr.get(0);
+            double open = arr.get(0);
             
-            if(Date.getMonth() != this.lastMonth) {
+            if(Date.getMonth() != this.lastMonth && this.metrics) {
                 this.lastMonth = Date.getMonth();
-               
                 MetricsController.refresh(Date.getDate(),this.broker.getBalance());
                 Integer d = Integer.parseInt(Date.getDate());
                 try{
@@ -88,8 +96,8 @@ public class Gear extends Thread{
                 this.broker.setOpenMin(open);
             }
             for (int i = 0; i < arr.size(); i++) {
-                Double bid =arr.get(i);
-                Double ask = Arithmetic.sumar(bid, this.settings.getSpread());
+                double bid =arr.get(i);
+                double ask = Arithmetic.sumar(bid, this.settings.getSpread());
                 this.broker.ticker(bid);
                 this.expert.setBid(bid);  
                 this.expert.setAsk(ask);

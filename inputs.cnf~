@@ -1,4 +1,4 @@
-# Archivo de configuracion del Tester.
+# Archivo de configuracion de la aplicación.
 
 
 # Monedas que el sistema utilizará, debes de separarlas con un coma.
@@ -6,12 +6,12 @@ currencies = EURUSD,USDJPY,GBPUSD,USDCHF,EURGBP
 #Spread que usará la prueba.
 spread = 4.0
 lotes = 1
-#Tamaño de la muestra, se correrá como máximo de pruebas este número.
-muestra = 700
-# ubicación de archivo .json
+# ubicación de archivo .set
+# "./" significa que se encuentra el el root del ejecutable, de otra
+# forma se buscara una ruta absoluta.
 extern_file = ./config/eurusd.json
-threads = 3
 
-metrics = 0
+metrics = false
+
 logger = true
 trade_log = true

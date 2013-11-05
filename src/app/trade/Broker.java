@@ -1,7 +1,11 @@
 package app.trade;
 
 import help.Date;
+import io.Exceptions.SettingNotFound;
+import io.Inputs;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import trade.Arithmetic;
 import trade.Brokeable;
 import trade.Ordener;
@@ -13,7 +17,7 @@ import util.Excel;
  * @author omar
  */
 public class Broker extends Brokeable{
-    private ArrayList<Orden> ordersClosed = new ArrayList();
+    
     IndicatorController indicatorController;
     private Integer consecWins = 0;
     private Integer consecLoss = 0;
@@ -25,27 +29,22 @@ public class Broker extends Brokeable{
     private Integer winTrades = 0;
     private Integer totalTrades = 0;
     private Integer initialDeposit;
-    private Double balance ;
-    private Double maxFloatProf;
-    private Double minFloatProf;
-    private Double grossLoss = 0.0;
-    private Double grossProfit = 0.0;
-    private Double drowDown = 0.0;
-    private Double drowDownVal = 0.0;
-    private Double largestProfit = 0.0;
-    private Double largestLoss = 0.0;
-    private Double shortsPercent;
-    private Double longsPercent;
-    private Double winsPercent;
-    private Double lossPercent;
-    private Double Bid;
-    private Double Ask;
+    private double balance ;
+    private double maxFloatProf;
+    private double minFloatProf;
+    private double drowDown = 0.0;
+    private double drowDownVal = 0.0;
+    private double largestProfit = 0.0;
+    private double largestLoss = 0.0;
+    private double shortsPercent;
+    private double longsPercent;
+    private double Bid;
+    private double Ask;
     private Excel file;
-
-    private Double longRelative = -1.0;
-
+    private Boolean tradeLog;
+    private double longRelative = -1.0;
     private Integer longTrades = -1;
-    private Double longProfit;
+    private double longProfit;
     
     public Broker(Integer initialDeposit){
         super();
@@ -54,12 +53,19 @@ public class Broker extends Brokeable{
         this.balance = this.initialDeposit.doubleValue();
         this.maxFloatProf = this.initialDeposit.doubleValue();
         this.minFloatProf = this.initialDeposit.doubleValue();
-        this.file = new Excel("result");
-        this.file.setHeader("Ticket, Open Time, Type, Size, Item, Price, S/L, T/P, Close Time, Price, Swap, Profit \n");
+        try {
+            this.tradeLog = Boolean.parseBoolean(Inputs.getInstance().getInput("trade_log"));
+        } catch (SettingNotFound ex) {
+            Logger.getLogger(Broker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(this.tradeLog){
+            this.file = new Excel("result");
+            this.file.setHeader("Ticket, Open Time, Type, Size, Item, Price, S/L, T/P, Close Time, Price, Swap, Profit \n");
+        }
     }
     
     @Override
-    public void setOpenMin(Double d) {
+    public void setOpenMin(double d) {
         this.indicatorController.setOpenMinute(d);
     }
     
@@ -74,7 +80,7 @@ public class Broker extends Brokeable{
             this.maxFloatProf = this.initialDeposit.doubleValue();
             this.minFloatProf = this.initialDeposit.doubleValue();
         }
-       // this.file.writeItOut();
+        this.file.writeItOut();
     }
     
     /**
@@ -84,14 +90,12 @@ public class Broker extends Brokeable{
         //Porcentajes:
         //Nota: Si divides dos daran como resultado un entero asi , casteamos 
         //Uno de los dos a float y este cast se hace antes que la division ;).
-        this.shortsPercent = new Double ((float)this.shorts / this.totalTrades);
-        this.longsPercent = new Double ((float)this.longs / this.totalTrades);
-        this.winsPercent = new Double ((float)this.winTrades / this.totalTrades);
-        this.lossPercent = new Double ((float)this.lossTrades / this.totalTrades);
+        this.shortsPercent = (float)this.shorts / this.totalTrades;
+        this.longsPercent = (float)this.longs / this.totalTrades;
         this.drowDownVal = (this.drowDown * this.initialDeposit)/100;
         //La racha:
         if (this.prevOrder > 0) {
-            if(this.racha > this.consecWins){
+            if(this.racha > this.consecWins) {
                 this.consecWins = this.racha;
             }
         }else if (this.prevOrder < 0) {
@@ -99,7 +103,6 @@ public class Broker extends Brokeable{
                 this.consecLoss = this.racha;
             }
         }
-        
     }
     
     /**
@@ -107,10 +110,10 @@ public class Broker extends Brokeable{
      * @param orden 
      */
     @Override
-    public void refreshDrowDown(Ordener orden){
+    public void refreshDrowDown(Ordener orden) {
         Orden o  = (Orden)orden;
-        Double floatProfit = this.initialDeposit + o.getLossProfit();
-        Double tempDropDn = 0.0;
+        double floatProfit = this.initialDeposit + o.getLossProfit();
+        double tempDropDn = 0.0;
         if (floatProfit > this.maxFloatProf) {
             this.maxFloatProf = floatProfit;
             tempDropDn = ((this.maxFloatProf - this.minFloatProf)/this.maxFloatProf) * 100;
@@ -148,9 +151,11 @@ public class Broker extends Brokeable{
     @Override
     public void orderCloseCallback(Ordener o) {
         Orden orden = (Orden) o;
-        this.file.addData(orden.getID() + ", "+ orden.getOpenTime() + ", "+ orden.getSideStr() +", "+ 1 + ", " + orden.getOpenPrice() +", "+orden.getSymbol()+", " + orden.
+        if(this.tradeLog) {
+            this.file.addData(orden.getID() + ", "+ orden.getOpenTime() + ", "+ orden.getSideStr() +", "+ 1 + ", " + orden.getOpenPrice() +", "+orden.getSymbol()+", " + orden.
                 getSl() + ", "+ orden.getTp() + ", " + Date.dateToString() + ", "+orden.getClosePrice() + ", " + orden.getSwap() + ", " + orden.getLossProfit());
-        this.ordersClosed.add(orden);
+        }
+        
         this.balance += orden.getLossProfit();
         this.totalTrades++;
         if (orden.getSide() == '1') { 
@@ -161,8 +166,6 @@ public class Broker extends Brokeable{
         //Contamos ganancias/Perdidas, y racha +/-.
         if (orden.getLossProfit()>0) { 
             this.winTrades++;
-            
-            this.grossProfit += orden.getLossProfit();
             if(orden.getLossProfit() > this.largestProfit) {
                 this.largestProfit = orden.getLossProfit();
             }
@@ -178,8 +181,7 @@ public class Broker extends Brokeable{
                 this.prevOrder = 1;
             }
         } else if (orden.getLossProfit() < 0) { //Si la orden perdió.
-            this.lossTrades++;   
-            this.grossLoss += orden.getLossProfit();
+            this.lossTrades++;
             if (Math.abs(orden.getLossProfit()) > this.largestLoss) {
                 this.largestLoss = orden.getLossProfit();
             }
@@ -215,17 +217,17 @@ public class Broker extends Brokeable{
     /**
      * @return balance actual.
      */
-    public Double getBalance(){   
+    public double getBalance(){   
         return this.balance;
     }
-    public Double getProfit() {
+    public double getProfit() {
         return (this.getBalance() - this.initialDeposit);
     }
-    public Double getDrowDown(){
+    public double getDrowDown(){
         return Arithmetic.redondear(this.drowDown);
     }
     
-    public Double getDrowDownValue(){
+    public double getDrowDownValue(){
         return this.drowDownVal;
     }
     public Double getShortPositionsPercent(){
@@ -257,11 +259,11 @@ public class Broker extends Brokeable{
         return this.longTrades;
     }
     
-    public Double getLongProfit() {
+    public double getLongProfit() {
         return this.longProfit;
     }
     
-    public Double getLongRelative() {
+    public double getLongRelative() {
         return this.longRelative;
     }
     

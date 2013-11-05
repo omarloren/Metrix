@@ -12,7 +12,7 @@ import trade.Ordener;
 
 public class Orden extends Ordener {
     private Broker broker;
-    private Double profitLoss = 0.0; //Ganancia o Perdida.
+    private double profitLoss = 0.0; //Ganancia o Perdida.
     private Integer tickVal = 100000;
     private String date;
     public Integer weekDay;
@@ -30,7 +30,7 @@ public class Orden extends Ordener {
     
     public Orden setBroker(Broker broker) {
         this.broker = broker;
-        return this;
+        return this; 
     }
     
     public String getOpenTime(){
@@ -64,7 +64,7 @@ public class Orden extends Ordener {
      * @return 
      */
     public Double getSwap() {
-        Double swap = 0.0;
+        double swap = 0.0;
         if(!this.date.equals(Date.getDate()) && Date.dayOfWeek() != 1){
             if(this.getSide() == '1') {
                 swap = 3.20;
@@ -78,9 +78,9 @@ public class Orden extends Ordener {
         return Arithmetic.redondear(swap, 2);   
     }
     
-    public Double getLossProfit(){
-        Double temp = Arithmetic.restar(this.getClosePrice() , this.getOpenPrice());
-        Double res;
+    public double getLossProfit(){
+        double temp = Arithmetic.restar(this.getClosePrice() , this.getOpenPrice());
+        double res;
         if (this.getSide() == '2') {
             if (temp < 0) {
                 temp = Math.abs(temp);
@@ -88,10 +88,7 @@ public class Orden extends Ordener {
                 temp *= -1;
             }
         }
-       
-       res= (temp * this.tickVal) - this.getSwap();
-       
-        
+        res= (temp * this.tickVal) - this.getSwap();
         return Arithmetic.redondear(res, 2);
     }
     

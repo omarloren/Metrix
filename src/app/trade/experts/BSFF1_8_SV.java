@@ -28,13 +28,13 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     private Double sl;
     private Double tp; 
     private Double bollSpecial;
-    private Double bollXDn;
-    private Double bollXUp;
-    private Double bollUp;
-    private Double bollDn;
-    private Double bollUpS;
-    private Double bollDnS;
-    private Double bollDif;
+    private double bollXDn;
+    private double bollXUp;
+    private double bollUp;
+    private double bollDn;
+    private double bollUpS;
+    private double bollDnS;
+    private double bollDif;
     private Integer velasSalida;
     private Integer limiteCruce;
     private Double horaIni;
@@ -148,7 +148,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * Promedio de entrada de ventas.
      * @return 
      */
-    public Double bollUp() {
+    public double bollUp() {
         
         return (this.b1.getUpperBand() + this.b2.getUpperBand() + 
                             this.b3.getUpperBand())/3;
@@ -157,7 +157,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * Promedio Entrada de compras.
      * @return 
      */
-    private Double bollDn() {
+    private double bollDn() {
         return (this.b1.getLowerBand() + this.b2.getLowerBand() +
                             this.b3.getLowerBand())/3;
     }
@@ -166,7 +166,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * Promedio salida de compras.
      * @return 
      */
-    private Double bollUpS() {
+    private double bollUpS() {
         return Arithmetic.redondear((this.bs1.getUpperBand() + this.bs2.getUpperBand() +
                             this.bs3.getUpperBand())/3, 7);
     }
@@ -174,14 +174,14 @@ public class BSFF1_8_SV extends Expert implements IExpert{
      * Promedio salida de ventas.
      * @return 
      */
-    private Double bollDnS() {
+    private double bollDnS() {
         return Arithmetic.redondear((this.bs1.getLowerBand() + this.bs2.getLowerBand() +
                             this.bs3.getLowerBand())/3, 7);
     }
     
-    private Double bollDif() {
-        Double tempUp = (this.bx1.getUpperBand() + this.bx2.getUpperBand() + this.bx3.getUpperBand())/3;
-        Double tempDn = (this.bx1.getLowerBand() + this.bx2.getLowerBand() + this.bx3.getLowerBand())/3;
+    private double bollDif() {
+        double tempUp = (this.bx1.getUpperBand() + this.bx2.getUpperBand() + this.bx3.getUpperBand())/3;
+        double tempDn = (this.bx1.getLowerBand() + this.bx2.getLowerBand() + this.bx3.getLowerBand())/3;
         return Arithmetic.redondear(tempUp - tempDn, 7);
     }
     

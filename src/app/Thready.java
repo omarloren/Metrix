@@ -3,6 +3,7 @@ package app;
 import app.trade.Gear;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import help.Crono;
 import java.util.Map;
 import util.Settings;
 
@@ -10,7 +11,7 @@ import util.Settings;
  *
  * @author omar
  */
-public class Thready extends Thread{
+public class Thready implements Runnable{
     private Gear gear;
     private DBCursor data;
     private static int cont = 0;
@@ -26,12 +27,15 @@ public class Thready extends Thread{
     
     @Override
     public void run(){
+        System.err.println("#"+this.gear.id + " iniciando :)");
+        Crono c = new Crono();
+        c.init();
         while (this.data.hasNext()) {
             DBObject o = this.data.next();
             this.gear.tick(o);
             //System.out.println(this.gear.id+ " => " + o );
        }
-        System.err.println("#"+this.gear.id + " has finished :)");
+        System.err.println("#"+this.gear.id + " has finished => "+ c.end());
     }
     
 }

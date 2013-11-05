@@ -33,23 +33,19 @@ public class App {
     public Excel file;
     private Integer from;
     private Integer to;
-    
+    private Boolean canMetr;
     public App() {
         this.inputs = Inputs.getInstance();
         try {
-            
             this.settings = new Settings(this.inputs.getInput("extern_file"));
             _break = ((Long)this.settings.getMetrics().get("break")).toString();
             this.iterador = new Iterador(this.settings.getExterns());
-            this.mongo = new Mongo().setDB("data").setCollection(this.settings.getSymbol());         
-            MetricsController.newPain("LONG",this.settings.getInitialWon(), this.settings.getFrom(), _break);
-            MetricsController.newPain("SHORT",this.settings.getInitialWon(), _break, this.settings.getTo());
-            MetricsController.newIR("LONG", this.settings.getFrom(), _break);
-            MetricsController.newIR( "SHORT", _break, this.settings.getTo());
+            this.mongo = new Mongo().setDB("data").setCollection(this.settings.getSymbol());
             this.file = new Excel(this.settings.getSymbol());
             this.from = Integer.parseInt(this.settings.getFrom());
             this.to = Integer.parseInt(this.settings.getTo());
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
+            this.canMetr = Boolean.parseBoolean(Inputs.getInstance().getInput("metrics"));
         } catch (SettingNotFound ex) {
             System.out.println(ex);
         }
@@ -61,25 +57,33 @@ public class App {
         int cont = 1;
         Map<String, Object> iteracion = new HashMap();
         System.out.println("Iniciando prueba " + this.iterador.getSize());
+        double ir = 0.0;
+        Pain painS = null ;
+        Pain painL = null;
         while (this.iterador.hasNext()) {
+            if (this.canMetr) {
+                MetricsController.newPain("LONG",this.settings.getInitialWon(), this.settings.getFrom(), _break);
+                MetricsController.newPain("SHORT",this.settings.getInitialWon(), _break, this.settings.getTo());
+                MetricsController.newIR("LONG", this.settings.getFrom(), _break);
+                MetricsController.newIR( "SHORT", _break, this.settings.getTo());
+            }
             long startTime = System.currentTimeMillis();
             iteracion = this.iterador.next();
             this.gear = new Gear(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
-            
             while (this.testData.hasNext()) {
                 DBObject o = this.testData.next();
                 this.gear.tick(o);
             }
             
             Broker broker = this.gear.getBroker();
-            MetricsController.refresh(Date.getDate(), broker.getBalance());
-            System.out.println(broker.getProfit());
-            Double ir = MetricsController.getIR();
-            Pain painS = MetricsController.getPain("SHORT");
-            Pain painL = MetricsController.getPain("LONG");
+            if(this.canMetr) {
+                MetricsController.refresh(Date.getDate(), broker.getBalance());
+                ir = MetricsController.getIR();
+                painS = MetricsController.getPain("SHORT");
+                painL = MetricsController.getPain("LONG");
+            }
             str = cont + ", " +ir + ", , "+ broker.getLongProfit() + ", "+broker.getLongTrades() + ", "+ broker.getLongRelative() + ", " + painS + " , ,";
             str +=  broker.getProfit() + ", "+broker.getTotalTrades() + ", "+ broker.getDrowDown() + ", "+ painL + ","+ this.iterador.toString(iteracion);
-            System.err.println("#"+cont+" "+str );
             this.file.addData(str);
             this.gear.flush();
             MetricsController.rebuildMetrics();
@@ -105,9 +109,9 @@ public class App {
         this.file.writeItOut();
     }
     
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         App app = new App();
         app.run();
         app.theEnd();
-    }
+    }*/
 }

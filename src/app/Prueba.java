@@ -1,15 +1,13 @@
 package app;
 
-import static app.App._break;
-import app.trade.Gear;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import dao.Mongo;
 import help.Crono;
 import io.Exceptions.SettingNotFound;
 import io.Inputs;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.Iterador;
@@ -27,6 +25,7 @@ public class Prueba {
     private Iterador iterador;
     private Integer from;
     private Integer to;
+    private Integer threads;
     private String _break;
     
     public Prueba(){
@@ -37,8 +36,9 @@ public class Prueba {
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
             this.iterador = new Iterador(this.settings.getExterns());
             this.from = Integer.parseInt(this.settings.getFrom());            
-             this.to = Integer.parseInt(this.settings.getTo());
-             _break = ((Long)this.settings.getMetrics().get("break")).toString();
+            this.to = Integer.parseInt(this.settings.getTo());
+            _break = ((Long)this.settings.getMetrics().get("break")).toString();
+            this.threads = Integer.parseInt(this.inputs.getInput("threads"));
         } catch (SettingNotFound ex) {
             Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -46,18 +46,18 @@ public class Prueba {
     
     public void run() {
         Map<String, Object> iteracion;
+        System.out.println(this.threads + " Threads " + this.iterador.getSize() + " iteraciones");
+        ExecutorService executor = Executors.newFixedThreadPool(this.threads);
         
-        System.out.println("Threads prueba " + this.iterador.getSize());
         while (this.iterador.hasNext()  ) {
             iteracion = this.iterador.next();
             Thready thready = new Thready(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             thready.setData(testData);
-            thready.start();
-            Crono.init();
-            System.out.println(Crono.end());
+            executor.execute(thready);
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
         }
- 
+        executor.shutdown();
+        System.out.println("Fin :)");
     }
     
     public static void main(String[] args) {

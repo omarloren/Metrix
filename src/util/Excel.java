@@ -1,6 +1,8 @@
 
 package util;
 
+import io.Exceptions.SettingNotFound;
+import io.Inputs;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +19,14 @@ public class Excel {
     private String file;
     private ArrayList<String> values = new ArrayList();
     private String header = "";
+    private Boolean canWrite;
     public Excel(String file){
         this.file = file + ".csv";
+        try {
+            this.canWrite = Boolean.parseBoolean(Inputs.getInstance().getInput("logger"));
+        } catch (SettingNotFound ex) {
+            Logger.getLogger(Excel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void addData(String str) {
@@ -29,16 +37,17 @@ public class Excel {
         this.header = header;
     }
     public void writeItOut(){
-       
-        try (FileWriter wr = new FileWriter(this.file)) {
-            wr.append(this.header);
-            for (int i = 0; i < this.values.size(); i++) {
-                wr.append(this.values.get(i) + "\n");
+        if(this.canWrite) {
+            try (FileWriter wr = new FileWriter(this.file)) {
+                wr.append(this.header);
+                for (int i = 0; i < this.values.size(); i++) {
+                    wr.append(this.values.get(i) + "\n");
+                }
+                wr.flush();
             }
-            wr.flush();
-        }
-        catch (IOException ex) {
-            Logger.getLogger(Excel.class.getName()).log(Level.SEVERE, null, ex);
+            catch (IOException ex) {
+                Logger.getLogger(Excel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
