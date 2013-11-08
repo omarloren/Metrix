@@ -112,7 +112,6 @@ public class BSFF1_8_SV extends Expert implements IExpert{
                 
                 if(o.getSide() == '2') {
                     if(this.getOpenMin() <= this.bollDnS) {
-                       //System.out.println(this.getOpenMin()+ " "+this.bollDnS);
                         o.close(this.getAsk(), "Cierre por bollinger");
                        
                     } else if(this.contVelas >= this.velasSalida) {

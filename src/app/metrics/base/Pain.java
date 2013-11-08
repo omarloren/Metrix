@@ -16,7 +16,6 @@ public class Pain extends Metric{
         this.initialAccount = initialAccount;
         this.getValues().add(initialAccount.doubleValue());
         this.setFlush(true);
-        
     }
     
     @Override

@@ -1,19 +1,16 @@
 
 package app;
 
-import app.metrics.MetricsController;
 import app.metrics.base.Pain;
 import app.trade.Broker;
 import app.trade.Gear;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import dao.Mongo;
-import help.Date;
 import io.Exceptions.SettingNotFound;
 import io.Inputs;
 import java.util.HashMap;
 import java.util.Map;
-
 import util.Excel;
 import util.Iterador;
 import util.Settings;
@@ -33,7 +30,7 @@ public class App {
     public Excel file;
     private Integer from;
     private Integer to;
-    private Boolean canMetr;
+    
     public App() {
         this.inputs = Inputs.getInstance();
         try {
@@ -45,7 +42,7 @@ public class App {
             this.from = Integer.parseInt(this.settings.getFrom());
             this.to = Integer.parseInt(this.settings.getTo());
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
-            this.canMetr = Boolean.parseBoolean(Inputs.getInstance().getInput("metrics"));
+            
         } catch (SettingNotFound ex) {
             System.out.println(ex);
         }
@@ -61,45 +58,25 @@ public class App {
         Pain painS = null ;
         Pain painL = null;
         while (this.iterador.hasNext()) {
-            if (this.canMetr) {
-                MetricsController.newPain("LONG",this.settings.getInitialWon(), this.settings.getFrom(), _break);
-                MetricsController.newPain("SHORT",this.settings.getInitialWon(), _break, this.settings.getTo());
-                MetricsController.newIR("LONG", this.settings.getFrom(), _break);
-                MetricsController.newIR( "SHORT", _break, this.settings.getTo());
-            }
-            long startTime = System.currentTimeMillis();
+                      
             iteracion = this.iterador.next();
             this.gear = new Gear(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             while (this.testData.hasNext()) {
                 DBObject o = this.testData.next();
-                this.gear.tick(o);
+                this.gear.Tick(o);
             }
             
             Broker broker = this.gear.getBroker();
-            if(this.canMetr) {
-                MetricsController.refresh(Date.getDate(), broker.getBalance());
-                ir = MetricsController.getIR();
-                painS = MetricsController.getPain("SHORT");
-                painL = MetricsController.getPain("LONG");
-            }
-            str = cont + ", " +ir + ", , "+ broker.getLongProfit() + ", "+broker.getLongTrades() + ", "+ broker.getLongRelative() + ", " + painS + " , ,";
-            str +=  broker.getProfit() + ", "+broker.getTotalTrades() + ", "+ broker.getDrowDown() + ", "+ painL + ","+ this.iterador.toString(iteracion);
-            this.file.addData(str);
-            this.gear.flush();
-            MetricsController.rebuildMetrics();
-            broker.reset();
             this.testData = this.testData.copy();
-            long endTime = System.currentTimeMillis();
-            double time = (endTime - startTime)/1000;
-            
-            System.err.println("#"+cont +" Tiempo del ciclo: "+time + " segundos.");
             cont++;
         }
         String headers = "";
         for(Map.Entry<String, Object> head : iteracion.entrySet()){
             headers += head.getKey() + ",";
         }
-        this.file.setHeader("Pass, IR, Short ->, Profit, Trades, Relative, Pain Index, Pain Ratio, LONG ->, Profit, Trades, Relative, Pain Index, Pain Ratio,  "+headers + "\n");
+        this.file.setHeader("Pass, IR, Short ->, Profit, Trades, Relative, Pain "
+                + "Index, Pain Ratio,Loss Avg, Loss stdDev, LONG ->, Profit, Trades, "
+                + "Relative, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, "+headers + "\n");
     }
     
     /**
@@ -109,9 +86,9 @@ public class App {
         this.file.writeItOut();
     }
     
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         App app = new App();
         app.run();
         app.theEnd();
-    }*/
+    }
 }

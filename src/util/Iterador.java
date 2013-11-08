@@ -85,7 +85,7 @@ public final class Iterador {
         return this.hasNext;
     }
     
-    public String toString(Map<String, Object> i){
+    public static String toString(Map<String, Object> i){
         Set<String> set = i.keySet();
         String s = " ";
         for (String key : set) {

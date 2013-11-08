@@ -2,7 +2,6 @@ package app;
 
 import com.mongodb.DBCursor;
 import dao.Mongo;
-import help.Crono;
 import io.Exceptions.SettingNotFound;
 import io.Inputs;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class Prueba {
         System.out.println(this.threads + " Threads " + this.iterador.getSize() + " iteraciones");
         ExecutorService executor = Executors.newFixedThreadPool(this.threads);
         
-        while (this.iterador.hasNext()  ) {
+        while (this.iterador.hasNext()) {
             iteracion = this.iterador.next();
             Thready thready = new Thready(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             thready.setData(testData);
