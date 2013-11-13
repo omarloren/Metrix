@@ -37,8 +37,8 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     private double bollDif;
     private Integer velasSalida;
     private Integer limiteCruce;
-    private Double horaIni;
-    private Double horaFin;
+    public Double horaIni;
+    public Double horaFin;
     private Integer contVelas = 0;
     
     /**

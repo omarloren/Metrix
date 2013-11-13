@@ -1,16 +1,15 @@
 
 package app;
 
-import app.metrics.base.Pain;
-import app.trade.Broker;
 import app.trade.Gear;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import dao.Mongo;
 import io.Exceptions.SettingNotFound;
 import io.Inputs;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import util.Excel;
 import util.Iterador;
 import util.Settings;
@@ -30,6 +29,8 @@ public class App {
     public Excel file;
     private Integer from;
     private Integer to;
+    private Integer threads;
+    private String headers;
     
     public App() {
         this.inputs = Inputs.getInstance();
@@ -42,53 +43,41 @@ public class App {
             this.from = Integer.parseInt(this.settings.getFrom());
             this.to = Integer.parseInt(this.settings.getTo());
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
-            
+            this.threads = Integer.parseInt(this.inputs.getInput("threads"));            
         } catch (SettingNotFound ex) {
             System.out.println(ex);
         }
     }
     
     public void run(){
-        String str;
-        
-        int cont = 1;
         Map<String, Object> iteracion = new HashMap();
-        System.out.println("Iniciando prueba " + this.iterador.getSize());
-        double ir = 0.0;
-        Pain painS = null ;
-        Pain painL = null;
+        System.out.println(this.threads + " Threads " + this.iterador.getSize() + " iteraciones");
+        ExecutorService executor = Executors.newFixedThreadPool(this.threads);
+        this.file.setLimit(this.iterador.getSize());
         while (this.iterador.hasNext()) {
-                      
             iteracion = this.iterador.next();
-            this.gear = new Gear(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
-            while (this.testData.hasNext()) {
-                DBObject o = this.testData.next();
-                this.gear.Tick(o);
-            }
-            
-            Broker broker = this.gear.getBroker();
-            this.testData = this.testData.copy();
-            cont++;
+            Thready thready = new Thready(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
+            thready.setData(testData).setFile(this.file);
+            executor.execute(thready);
+            this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
         }
-        String headers = "";
-        for(Map.Entry<String, Object> head : iteracion.entrySet()){
-            headers += head.getKey() + ",";
+        
+        for(Map.Entry<String, Object> head: iteracion.entrySet()){
+            this.headers += head.getKey() + ",";
         }
+        
         this.file.setHeader("Pass, IR, Short ->, Profit, Trades, Relative, Pain "
                 + "Index, Pain Ratio,Loss Avg, Loss stdDev, LONG ->, Profit, Trades, "
                 + "Relative, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, "+headers + "\n");
+        
+        /*THE*/executor.shutdown();
+        System.out.println("Fin :)");
     }
-    
+        
     /**
      * 
      */
     public void theEnd() {
-        this.file.writeItOut();
-    }
-    
-    public static void main(String[] args) {
-        App app = new App();
-        app.run();
-        app.theEnd();
+        //this.file.writeItOut();
     }
 }

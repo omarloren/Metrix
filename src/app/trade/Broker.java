@@ -80,7 +80,6 @@ public class Broker extends Brokeable{
             this.maxFloatProf = this.initialDeposit.doubleValue();
             this.minFloatProf = this.initialDeposit.doubleValue();
         }
-        this.file.writeItOut();
     }
     
     /**
@@ -106,7 +105,7 @@ public class Broker extends Brokeable{
     }
     
     /**
-     * Refrescamos las perdidas o ganacias flotantes asi como el drow - down.
+     * Refrescamos las perdidas o ganacias flotantes asi como el drowDown.
      * @param orden 
      */
     @Override
@@ -145,7 +144,7 @@ public class Broker extends Brokeable{
     
     @Override
     public void ordenOpenCallback(Ordener o) {
-       // System.out.println(" + Open  - " +(Orden)o);
+       //System.out.println(" + Open  - " +(Orden)o);
     }
 
     @Override
@@ -164,14 +163,14 @@ public class Broker extends Brokeable{
             this.shorts++; //Contamos las ventas.
         }
         //Contamos ganancias/Perdidas, y racha +/-.
-        if (orden.getLossProfit()>0) { 
+        if (orden.getLossProfit() > 0) { 
             this.winTrades++;
             if(orden.getLossProfit() > this.largestProfit) {
                 this.largestProfit = orden.getLossProfit();
             }
             if (this.prevOrder != null) { //Si no es la primer orden en cerrar.
-                if (this.prevOrder<0) {
-                    if (this.consecLoss <this.racha){
+                if (this.prevOrder < 0) {
+                    if (this.consecLoss < this.racha){
                         this.consecLoss = this.racha;
                     }
                     this.racha=0;
@@ -221,7 +220,7 @@ public class Broker extends Brokeable{
         return this.balance;
     }
     public double getProfit() {
-        return (this.getBalance() - this.initialDeposit);
+        return Arithmetic.redondear(this.getBalance() - this.initialDeposit);
     }
     public double getDrowDown(){
         return Arithmetic.redondear(this.drowDown);
@@ -260,11 +259,11 @@ public class Broker extends Brokeable{
     }
     
     public double getLongProfit() {
-        return this.longProfit;
+        return Arithmetic.redondear(this.longProfit);
     }
     
     public double getLongRelative() {
-        return this.longRelative;
+        return Arithmetic.redondear(this.longRelative);
     }
     
     @Override

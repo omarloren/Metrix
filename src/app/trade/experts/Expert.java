@@ -12,13 +12,12 @@ import trade.AbstractExpert;
  * @author omar
  */
 public class Expert extends AbstractExpert{
-    Extern extern; 
+    public Extern extern; 
    
     private Candle candle;
     public Expert build(Integer periodo) { 
         this.setPeriodo(periodo);
         this.candle = new Candle(periodo);
-        
         return this;
     }
     

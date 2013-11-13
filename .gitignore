@@ -5,3 +5,4 @@ manifest.mf
 /build/
 /config/
 ./*.csv
+/dist/

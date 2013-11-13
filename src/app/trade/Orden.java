@@ -57,7 +57,8 @@ public class Orden extends Ordener {
         this.setActive(false);
         this.setReason(reason);
         this.closeTime = Date.horaToString();
-        this.broker.closeOrder((Ordener)this);
+       
+        this.broker.closeOrder(this);
     }
     /**
      * Calculamos el 
@@ -96,6 +97,6 @@ public class Orden extends Ordener {
     public String toString() {
         return Date.dateToString()+" #"+this.getID() + " " +this.getSideStr() 
                 +" "+ this.getSymbol() +" a:" + this.getOpenPrice() + " SL:" +this.getSl() + " TP:" + 
-                this.getTp() ;
+                this.getTp() + " "+this.getReason() ;
     }
 }

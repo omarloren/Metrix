@@ -5,6 +5,8 @@ import app.trade.experts.BSFF1_8_SV;
 import com.mongodb.DBObject;
 import help.Candle;
 import help.Date;
+import io.Exceptions.SettingNotFound;
+import io.Inputs;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,13 +28,21 @@ public class Gear extends Thread{
     private Integer periodo;
     private Candle candle;
     private int lastMonth = 1;
+    private int lastDay = 0;
     private Integer from;
     private Integer _break;
     private Integer to;
     private MetricsController metricsController;
-            
+    private Boolean canSDT = false;
+    private int sundayCont = 0;
+    public Double longDrowdown;
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
-        
+        Inputs input = Inputs.getInstance();
+        try {
+            this.canSDT = Boolean.parseBoolean(input.getInput("SDT"));
+        } catch (SettingNotFound ex) {
+            Logger.getLogger(Gear.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.settings = settings;
         this.symbol = this.settings.getSymbol();
         this.periodo = this.settings.getPeriod();
@@ -45,7 +55,10 @@ public class Gear extends Thread{
         this.expert.build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());
         this.expert.setExtern(new Extern(it));
         this.expert.Init();
-        
+        if(this.canSDT && Date.getMonth() >= 11 || Date.getMonth() < 3){
+             this.expert.horaIni = this.sumHour(this.expert.horaIni);
+             this.expert.horaFin = this.sumHour(this.expert.horaFin);
+        }
     }
     
     public Gear setMetrics(MetricsController m){
@@ -69,12 +82,31 @@ public class Gear extends Thread{
             Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
             double open = arr.get(0);
-            
+            if(this.canSDT && Date.dayOfWeek() != this.lastDay){
+                if(Date.dayOfWeek() == 1){
+                    this.sundayCont++;
+                }
+                this.lastDay = Date.dayOfWeek();
+            }
+            if(this.canSDT){
+                if(Date.getMonth() == 11 && this.sundayCont == 1){
+                    this.expert.horaIni = this.sumHour(this.expert.horaIni);
+                    this.expert.horaFin = this.sumHour(this.expert.horaFin);
+                    this.sundayCont = 2;                    
+                }else if(Date.getMonth() == 3 && this.sundayCont == 2){
+                    
+                    this.expert.horaFin = this.expert.extern.getDouble("horafinal");
+                    this.expert.horaIni = this.expert.extern.getDouble("horainicial");
+                    this.sundayCont = 3;
+                }
+            }
             if(Date.getMonth() != this.lastMonth) {
                 this.lastMonth = Date.getMonth();
                 this.metricsController.refresh(Date.getDate(),this.broker.getBalance());
                 Integer d = Integer.parseInt(Date.getDate());
+                this.sundayCont = 0;
                 if(d >= this._break && d < this.to) {
+                    this.longDrowdown = this.broker.getDrowDown();
                     this.broker.reset();
                 }            
             }
@@ -82,7 +114,6 @@ public class Gear extends Thread{
             if (this.candle.isNew(Date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
-            
             for (int i = 0; i < arr.size(); i++) {
                 double bid =arr.get(i);
                 double ask = Arithmetic.sumar(bid, this.settings.getSpread());
@@ -98,6 +129,21 @@ public class Gear extends Thread{
         }
     }
     
+    /**
+     * Suma una hora a la hora actual reseteando a cero si pasa de 24.
+     * @param hour
+     * @return 
+     */
+    private Double sumHour(Double hour){
+        if(hour >= 24){
+            hour = hour - 24;
+        }
+        if(hour + 1 >= 24){
+            return (24-(hour+1));
+        }else{
+            return (hour+1);
+        }
+    }
     /**
      * Evalua la vela de minuto y filtra los precios en el orden que deberán ser
      * procesados.

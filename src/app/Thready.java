@@ -9,7 +9,9 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import help.Crono;
 import java.util.Map;
+import trade.Arithmetic;
 import trade.indicator.base.util.StandardDeviation;
+import util.Excel;
 import util.Iterador;
 import util.Settings;
 
@@ -21,9 +23,10 @@ public class Thready implements Runnable{
     
     private Gear gear;
     private DBCursor data;
-    private static int cont = 1;  
+    private static int cont = 0;  
     private MetricsController metricsController;      
     Map<String, Object> iteracion;
+    private Excel file;
     
     public Thready(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to){ 
         this.metricsController = new MetricsController();
@@ -33,8 +36,14 @@ public class Thready implements Runnable{
         cont++;
     }
     
-    public void setData(DBCursor data){
+    public Thready setData(DBCursor data){
         this.data = data;
+        return this;
+    }
+    
+    public Thready setFile(Excel file){
+        this.file = file;
+        return this;
     }
     
     @Override
@@ -55,7 +64,8 @@ public class Thready implements Runnable{
        Pain painS = this.metricsController.getPain("SHORT");
        Pain painL = this.metricsController.getPain("LONG");
        String str = cont + ", " +ir + ", , "+ broker.getLongProfit() + ", "+broker.getLongTrades() + ", "+ broker.getLongRelative() + ", " + painS +", "+shortMean+", "+ shortStd + " , ,";
-       str +=  broker.getProfit() + ", "+broker.getTotalTrades() + ", "+ broker.getDrowDown() + ", "+ painL+", " + longMean+", "+longStd + ","+ Iterador.toString(this.iteracion);
+       str +=  broker.getProfit() + ", "+broker.getTotalTrades() + ", "+ broker.getDrowDown() + ", "+ painL+", " + Arithmetic.redondear(longMean)+", "+Arithmetic.redondear(longStd) + ","+ Iterador.toString(this.iteracion);
+       this.file.addData(str);
        System.err.println("#"+this.gear.id + " has finished => "+ c.end());
     }
     
@@ -64,24 +74,23 @@ public class Thready implements Runnable{
         StandardDeviation res = new StandardDeviation();
 
         for (int i = 0; i < stdDev.getValues().size(); i++) {
-            if (stdDev.getValues().get(i) < 0) {
+            if (stdDev.getValues().get(i) < 100000) {
                 res.addValue(stdDev.getValues().get(i));
             }
         }
-        return res.calculateStdDev();
+        return Arithmetic.redondear(res.calculateStdDev());
     }
     
     private double getMean(String id){
         StdDev stdDev = (StdDev)this.metricsController.getStd(id);
         double sum = 0;
-        
         int c = 0;
         for (int i = 0; i < stdDev.getValues().size(); i++) {
-            if (stdDev.getValues().get(i) < 0) {
+            if (stdDev.getValues().get(i) < 100000) {
                 sum += stdDev.getValues().get(i);
                 c++;
             }
         }
-        return sum / c;
+        return Arithmetic.redondear(sum / c);
     }
 }

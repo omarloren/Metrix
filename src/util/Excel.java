@@ -20,6 +20,7 @@ public class Excel {
     private ArrayList<String> values = new ArrayList();
     private String header = "";
     private Boolean canWrite;
+    private Integer limit;
     public Excel(String file){
         this.file = file + ".csv";
         try {
@@ -29,15 +30,25 @@ public class Excel {
         }
     }
     
-    public void addData(String str) {
-       // System.out.println(str);
+    public synchronized void addData(String str) {
+        System.out.println(str);
         this.values.add(str);
+        if(this.limit == this.values.size()){
+            this.writeItOut();
+        }
     }
-    public void setHeader(String header){
+    
+    public Excel setHeader(String header){
         this.header = header;
+        return this;
     }
-    public void writeItOut(){
+    public Excel setLimit(Integer i){
+        this.limit = i;
+        return this;
+    }
+    private void writeItOut() {
         if(this.canWrite) {
+            System.out.println("Escribiendo archivo...");
             try (FileWriter wr = new FileWriter(this.file)) {
                 wr.append(this.header);
                 for (int i = 0; i < this.values.size(); i++) {

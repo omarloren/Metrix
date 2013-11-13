@@ -10,8 +10,10 @@ lotes = 1
 muestra = 700
 # ubicación de archivo .json
 extern_file = ./config/eurusd.json
-threads = 3
+threads = 2
 
 metrics = 0
 logger = true
-trade_log = true
+trade_log = false
+#Tomar en centa los horarios de verano
+SDT = true

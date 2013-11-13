@@ -59,8 +59,4 @@ public class Prueba {
         System.out.println("Fin :)");
     }
     
-    public static void main(String[] args) {
-        Prueba p = new Prueba();
-        p.run();
-    }
 }
