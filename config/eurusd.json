@@ -1,6 +1,6 @@
 {
     "symbol" : "EURUSD",
-    "period" : 5,
+    "period" : 15,
     "MAGICMA" : 42,
     "spread" : 3,
     "initialWon" : 100000,
@@ -22,47 +22,47 @@
                 "stop" : 2
         },
         "horainicial" : {
-                "start" : 23.0,
+                "start" : 21.0,
                 "step" : 0.0,
                 "stop" : 1.0
         },
         "horafinal" : {
-                "start" : 24.0,
+                "start" : 22.0,
                 "step" : 0.0,
                 "stop" : 2.0
         },
         "periodoBoll3" : {
-                "start" : 40,
+                "start" : 13,
                 "step" : 0,
-                "stop" : 80
+                "stop" : 39
         },
         "periodoBoll2" : {
-                "start" : 16,
+                "start" : 30,
                 "step" : 0,
-                "stop" : 32
+                "stop" : 90
         },
         "periodoBoll" : {
-                "start" : 1,
+                "start" : 13,
                 "step" : 0,
-                "stop" : 50
+                "stop" : 39
         },
         "periodoBollSalida" : {
                 "start" : 1,
                 "step" : 0,
-                "stop" : 50
+                "stop" : 15
         },
         "periodoBollSalida2" : {
+                "start" : 25,
+                "step" : 0,
+                "stop" : 50
+        },
+        "periodoBollSalida3" : {
                 "start" : 40,
                 "step" : 0,
                 "stop" : 80
         },
-        "periodoBollSalida3" : {
-                "start" : 16,
-                "step" : 0,
-                "stop" : 32
-        },
         "XBoll" : {
-                "start" : 30,
+                "start" : 10,
                 "step" : 0,
                 "stop" : 1
         },
@@ -77,14 +77,14 @@
                 "stop" : 1
         },
         "tp" : {
-                "start" : 40,
+                "start" : 13,
                 "step" : 0,
-                "stop" : 80
+                "stop" : 23
         },
         "sl" : {
-                "start" : 40,
+                "start" : 13,
                 "step" : 0,
-                "stop" : 80
+                "stop" : 22
         },
         "bollXUp" : {
                 "start" : 100.0,
@@ -92,19 +92,19 @@
                 "stop" : 1.0
         },
         "bollXDn" : {
-                "start" : 0.0,
+                "start" : 0.0085,
                 "step" : 0.0,
                 "stop" : 0.0034
         },
         "bollspecial" : {
-                "start" : 0.0,
+                "start" : 0.0003,
                 "step" : 0.0,
                 "stop" : 0.0002
         },
         "num_velas_salida" : {
-                "start" : 150 ,
+                "start" : 6 ,
                 "step" : 0,
-                "stop" : 300	
+                "stop" : 16	
         },
         "limiteCruce" : {
                 "start" : 1,

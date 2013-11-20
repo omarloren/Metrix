@@ -55,7 +55,6 @@ public class Prueba {
             executor.execute(thready);
             this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
         }
-        executor.shutdown();
         System.out.println("Fin :)");
     }
     

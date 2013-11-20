@@ -34,6 +34,7 @@ public class Gear extends Thread{
     private Integer to;
     private MetricsController metricsController;
     private Boolean canSDT = false;
+    private Boolean lock = false;
     private int sundayCont = 0;
     public Double longDrowdown;
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
@@ -82,6 +83,7 @@ public class Gear extends Thread{
             Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
             double open = arr.get(0);
+            //Manejor de horarios de verano
             if(this.canSDT && Date.dayOfWeek() != this.lastDay){
                 if(Date.dayOfWeek() == 1){
                     this.sundayCont++;
@@ -89,10 +91,15 @@ public class Gear extends Thread{
                 this.lastDay = Date.dayOfWeek();
             }
             if(this.canSDT){
+                /**
+                 * si es el primer domingo de noviembre sumamos una hora a los 
+                 * horarios del expert.
+                 */
                 if(Date.getMonth() == 11 && this.sundayCont == 1){
                     this.expert.horaIni = this.sumHour(this.expert.horaIni);
                     this.expert.horaFin = this.sumHour(this.expert.horaFin);
-                    this.sundayCont = 2;                    
+                    this.sundayCont = 2;          
+                 //Si es el segunto domingo de marzo lo regresamos a como estaba.
                 }else if(Date.getMonth() == 3 && this.sundayCont == 2){
                     
                     this.expert.horaFin = this.expert.extern.getDouble("horafinal");
@@ -100,14 +107,17 @@ public class Gear extends Thread{
                     this.sundayCont = 3;
                 }
             }
+            //Cada mes.
             if(Date.getMonth() != this.lastMonth) {
                 this.lastMonth = Date.getMonth();
                 this.metricsController.refresh(Date.getDate(),this.broker.getBalance());
                 Integer d = Integer.parseInt(Date.getDate());
                 this.sundayCont = 0;
-                if(d >= this._break && d < this.to) {
+                
+                if(!lock && d >= this._break && d < this.to) {
                     this.longDrowdown = this.broker.getDrowDown();
                     this.broker.reset();
+                    this.lock = true;
                 }            
             }
             this.expert.setOpenMin(open);
@@ -129,18 +139,22 @@ public class Gear extends Thread{
         }
     }
     
+    public Double getlongDrowdown(){
+        return this.longDrowdown;
+    }
+    
     /**
      * Suma una hora a la hora actual reseteando a cero si pasa de 24.
      * @param hour
      * @return 
      */
     private Double sumHour(Double hour){
-        if(hour >= 24){
+        if(hour >= 24) {
             hour = hour - 24;
         }
-        if(hour + 1 >= 24){
+        if(hour + 1 >= 24) {
             return (24-(hour+1));
-        }else{
+        } else {
             return (hour+1);
         }
     }

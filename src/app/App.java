@@ -30,7 +30,7 @@ public class App {
     private Integer from;
     private Integer to;
     private Integer threads;
-    private String headers;
+    private String headers = "";
     
     public App() {
         this.inputs = Inputs.getInstance();
@@ -55,20 +55,20 @@ public class App {
         ExecutorService executor = Executors.newFixedThreadPool(this.threads);
         this.file.setLimit(this.iterador.getSize());
         while (this.iterador.hasNext()) {
+            this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
             iteracion = this.iterador.next();
             Thready thready = new Thready(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             thready.setData(testData).setFile(this.file);
             executor.execute(thready);
-            this.testData = this.mongo.getRange(Integer.parseInt(this.settings.getFrom()), Integer.parseInt(this.settings.getTo()));
         }
         
         for(Map.Entry<String, Object> head: iteracion.entrySet()){
             this.headers += head.getKey() + ",";
         }
         
-        this.file.setHeader("Pass, IR, Short ->, Profit, Trades, Relative, Pain "
-                + "Index, Pain Ratio,Loss Avg, Loss stdDev, LONG ->, Profit, Trades, "
-                + "Relative, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, "+headers + "\n");
+        this.file.setHeader("Pass, IR, Short ->, Profit, Trades, Pain "
+                + "Index, Pain Ratio,Loss Avg, Loss stdDev, Loss DrowDown, LONG ->, Profit, Trades, "
+                + "Pain Index, Pain Ratio, Loss stdDev, Loss Avg, Loss DrowDown, "+headers + "\n");
         
         /*THE*/executor.shutdown();
         System.out.println("Fin :)");
