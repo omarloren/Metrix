@@ -1,9 +1,6 @@
 package app.trade.experts;
 
 import app.trade.Orden;
-import help.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import trade.Arithmetic;
 import trade.IExpert;
 import trade.indicator.base.BollingerBands;
@@ -184,8 +181,5 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         return Arithmetic.redondear(tempUp - tempDn, 7);
     }
     
-    @Override
-    public String toString(){
-        return Date.dateToString()+" "+this.getOpenMin()  +" ==> BollUpS:"+this.bollUpS + " BollDnS:"+this.bollDnS;
-    }
+   
 }

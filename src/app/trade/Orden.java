@@ -14,18 +14,20 @@ public class Orden extends Ordener {
     private Broker broker;
     private double profitLoss = 0.0; //Ganancia o Perdida.
     private Integer tickVal = 100000;
-    private String date;
+    private String dateStr;
+    private Date date;
     public Integer weekDay;
     private Integer hora;
     private String openTime = "null";
     private String closeTime = "null";
     
-    public Orden(String symbol,Integer magic, Double lotes, Character side, Double price){
+    public Orden(Date date, String symbol,Integer magic, Double lotes, Character side, Double price){
         super(symbol,lotes,side,price);
+        this.date = date;
         this.setMagic(magic);
-        this.date = Date.getDate();
-        this.weekDay = Date.dayOfWeek();
-        this.openTime = Date.dateToString();
+        this.dateStr = this.date.getDate();
+        this.weekDay = this.date.dayOfWeek();
+        this.openTime = this.date.dateToString();
     }
     
     public Orden setBroker(Broker broker) {
@@ -56,7 +58,7 @@ public class Orden extends Ordener {
         this.setClosePrice(close);
         this.setActive(false);
         this.setReason(reason);
-        this.closeTime = Date.horaToString();
+        this.closeTime = this.date.horaToString();
        
         this.broker.closeOrder(this);
     }
@@ -66,13 +68,13 @@ public class Orden extends Ordener {
      */
     public Double getSwap() {
         double swap = 0.0;
-        if(!this.date.equals(Date.getDate()) && Date.dayOfWeek() != 1){
+        if(!this.dateStr.equals(this.date.getDate()) && this.date.dayOfWeek() != 1){
             if(this.getSide() == '1') {
                 swap = 3.20;
             } else {
                 swap = 7.40;
             }
-            if(Date.dayOfWeek() == 5){
+            if(this.date.dayOfWeek() == 5){
                 swap *= 3;
             }
         } 
@@ -95,7 +97,7 @@ public class Orden extends Ordener {
     
     @Override
     public String toString() {
-        return Date.dateToString()+" #"+this.getID() + " " +this.getSideStr() 
+        return this.date.dateToString()+" #"+this.getID() + " " +this.getSideStr() 
                 +" "+ this.getSymbol() +" a:" + this.getOpenPrice() + " SL:" +this.getSl() + " TP:" + 
                 this.getTp() + " "+this.getReason() ;
     }

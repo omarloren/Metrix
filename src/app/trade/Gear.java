@@ -21,6 +21,7 @@ import util.Settings;
 public class Gear extends Thread{
     
     private Broker broker;
+    private Date date;
     public int id;
     private BSFF1_8_SV expert = new BSFF1_8_SV();
     private Settings settings;    
@@ -36,8 +37,13 @@ public class Gear extends Thread{
     private Boolean canSDT = false;
     private int sundayCont = 0;
     public Double longDrowdown;
+    private Boolean lock = false;
+    private static int cont = 0;
+    public Boolean killMe = false;
+    
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
         Inputs input = Inputs.getInstance();
+        this.date = new Date();
         try {
             this.canSDT = Boolean.parseBoolean(input.getInput("SDT"));
         } catch (SettingNotFound ex) {
@@ -50,12 +56,13 @@ public class Gear extends Thread{
         this.from = from;
         this._break = _break;
         this.to = to;
-        this.broker = new Broker(this.settings.getInitialWon());        
+        this.broker = new Broker(this.settings.getInitialWon());     
+        this.broker.setDate(this.date);
         this.broker.setSpread(this.settings.getSpread());
         this.expert.build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());
-        this.expert.setExtern(new Extern(it));
+        this.expert.setExtern(new Extern(it)).setDate(this.date);
         this.expert.Init();
-        if(this.canSDT && Date.getMonth() >= 11 || Date.getMonth() < 3){
+        if(this.canSDT && this.date.getMonth() >= 11 || this.date.getMonth() < 3){
              this.expert.horaIni = this.sumHour(this.expert.horaIni);
              this.expert.horaFin = this.sumHour(this.expert.horaFin);
         }
@@ -79,39 +86,49 @@ public class Gear extends Thread{
     
     public void Tick(DBObject t) {
         try {
-            Date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
+            this.date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
             double open = arr.get(0);
-            if(this.canSDT && Date.dayOfWeek() != this.lastDay){
-                if(Date.dayOfWeek() == 1){
+            if(this.canSDT && this.date.dayOfWeek() != this.lastDay){
+                if(this.date.dayOfWeek() == 1){
                     this.sundayCont++;
                 }
-                this.lastDay = Date.dayOfWeek();
+                this.lastDay = this.date.dayOfWeek();
             }
             if(this.canSDT){
-                if(Date.getMonth() == 11 && this.sundayCont == 1){
+                if(this.date.getMonth() == 11 && this.sundayCont == 1){
                     this.expert.horaIni = this.sumHour(this.expert.horaIni);
                     this.expert.horaFin = this.sumHour(this.expert.horaFin);
                     this.sundayCont = 2;                    
-                }else if(Date.getMonth() == 3 && this.sundayCont == 2){
+                }else if(this.date.getMonth() == 3 && this.sundayCont == 2){
                     
                     this.expert.horaFin = this.expert.extern.getDouble("horafinal");
                     this.expert.horaIni = this.expert.extern.getDouble("horainicial");
                     this.sundayCont = 3;
                 }
             }
-            if(Date.getMonth() != this.lastMonth) {
-                this.lastMonth = Date.getMonth();
-                this.metricsController.refresh(Date.getDate(),this.broker.getBalance());
-                Integer d = Integer.parseInt(Date.getDate());
+            if(this.date.getMonth() != this.lastMonth) {
+                Integer d = Integer.parseInt(this.date.getDate());
+                if(this.lock && d <= this._break) {
+                    this.killMe = true;
+                    return;
+                }
+                this.lastMonth = this.date.getMonth();
+                this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
+                
                 this.sundayCont = 0;
-                if(d >= this._break && d < this.to) {
+                
+                if(!this.lock && d >= this._break && d < this.to) {
+                    
                     this.longDrowdown = this.broker.getDrowDown();
                     this.broker.reset();
-                }            
+                    this.lock = true;
+                }
+                
             }
+           
             this.expert.setOpenMin(open);
-            if (this.candle.isNew(Date.getMinutes())) {
+            if (this.candle.isNew(this.date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
             for (int i = 0; i < arr.size(); i++) {
@@ -120,10 +137,10 @@ public class Gear extends Thread{
                 this.broker.ticker(bid);
                 this.expert.setBid(bid);  
                 this.expert.setAsk(ask);
-                if(this.expert.isTradeTime() || !this.broker.getOrders().isEmpty()){
-                    this.expert.onTick();
-                }
+                this.expert.onTick();
+
             }
+          
         } catch (Exception ex) {
             Logger.getLogger(Gear.class.getName()).log(Level.SEVERE, null, ex);
         }

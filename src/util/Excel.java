@@ -31,7 +31,7 @@ public class Excel {
     }
     
     public synchronized void addData(String str) {
-        System.out.println(str);
+        
         this.values.add(str);
         if(this.limit == this.values.size()){
             this.writeItOut();
@@ -52,7 +52,7 @@ public class Excel {
             try (FileWriter wr = new FileWriter(this.file)) {
                 wr.append(this.header);
                 for (int i = 0; i < this.values.size(); i++) {
-                    wr.append(this.values.get(i) + "\n");
+                    wr.append((i+1)+", "+this.values.get(i));
                 }
                 wr.flush();
             }

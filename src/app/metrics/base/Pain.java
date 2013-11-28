@@ -31,7 +31,7 @@ public class Pain extends Metric{
         }
     }
     
-    private Double getPeakDrowDrawn() {
+    public Double getPeakDrowDrawn() {
         Double sum = 0.0;
         for (int i = 0; i < this.getValues().size(); i++) {
             Double max = this.getMaximal(i);
@@ -56,16 +56,15 @@ public class Pain extends Metric{
     
     public Double getAnunualisedReturn() {
         if(this.length() > 1) {
-            Double last = this.getValues().get(this.length()-1) / 1000;
-            Double temp = ((last - 100) / 100) / this.length();
-            return  Arithmetic.redondear((temp * 12) * 100 , 2);
+            Double last = (this.getValues().get(this.length()-1) - 100000);
+            return  Arithmetic.redondear(last / this.length() * 12 / 1000, 2);
         } else {
             return 0.0;
         }
     }
     
     public Double getRatio() {
-        Double temp = Arithmetic.redondear((this.getAnunualisedReturn() - 0) / this.getIndex(), 2);
+        Double temp = Arithmetic.redondear(this.getAnunualisedReturn() / this.getIndex(), 2);
         return temp;
     }
     

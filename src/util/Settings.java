@@ -32,65 +32,60 @@ public class Settings {
     private Integer initialWon;
     private Integer spread;
     private Double point;
-    private Map<String, ArrayList> externs = new HashMap<>();
+    private Map<String, ArrayList> externs = new LinkedHashMap<>();
     private Map<String, Object> metrics = new HashMap<>();
     
     public Settings(String file){
-        try {         
-            JSONParser parser = new JSONParser();
-            Iterator i = this.getJsonValues(parser.parse(this.fileToText(file)));
+        Iterator i = this.getJsonValues(this.fileToText(file));
+
+        while (i.hasNext()) {
+            Map.Entry entry = (Map.Entry) i.next();
+            String key = (String) entry.getKey();
             
-            while (i.hasNext()) {
-                Map.Entry entry = (Map.Entry) i.next();
-                String key = (String) entry.getKey();
-                
-                switch (key) {
-                    case "symbol":
-                        this.symbol = (String) entry.getValue();
-                        if(this.symbol.equals("USDJPY")){
-                            this.point = 0.001;
-                        } else {
-                            this.point = 0.0001;
-                        }
-                        break;
-                    case "period":
-                        this.period = ((Long) entry.getValue()).intValue();
-                        break;
-                    case "spread":
-                        this.spread = ((Long) entry.getValue()).intValue();
-                        break;
-                    case "date":
-                        LinkedHashMap<String,Long> date =(LinkedHashMap)entry.getValue();
-                        this.to = ((Long)date.get("to")).toString();
-                        this.from = ((Long)date.get("from")).toString();
-                        break;
-                    case "externs":
-                        LinkedHashMap<String, LinkedHashMap<String,Object>> h = (LinkedHashMap)entry.getValue();
-                        for(String k : h.keySet()) {
-                            this.externs.put(k, this.getVariable(h.get(k)));
-                        }
-                        break;
-                    case "metrics":
-                        LinkedHashMap<String, LinkedHashMap<String,Object>> l = (LinkedHashMap)entry.getValue();
-                        for(String k : l.keySet()) {
-                            this.metrics.put(k, l.get(k));
-                        }
-                        break;
-                    case "MAGICMA":
-                        this.MAGICMA = ((Long) entry.getValue()).intValue();
-                        break;
-                    case "initialWon":
-                        this.initialWon = ((Long) entry.getValue()).intValue();
-                        break;
-                    default:
-                        System.err.println("COLAPSO TOTAL: Settings => "+key);
-                        break;
-                }
+            switch (key) {
+                case "symbol":
+                    this.symbol = (String) entry.getValue();
+                    if(this.symbol.equals("USDJPY")){
+                        this.point = 0.001;
+                    } else {
+                        this.point = 0.0001;
+                    }
+                    break;
+                case "period":
+                    this.period = ((Long) entry.getValue()).intValue();
+                    break;
+                case "spread":
+                    this.spread = ((Long) entry.getValue()).intValue();
+                    break;
+                case "date":
+                    LinkedHashMap<String,Long> date = (LinkedHashMap) entry.getValue();
+                    this.to = ((Long)date.get("to")).toString();
+                    this.from = ((Long)date.get("from")).toString();
+                    break;
+                case "externs":
+                    Map<String, LinkedHashMap<String,Object>> h = ((LinkedHashMap)entry.getValue());
+                    for(String k : h.keySet()) {
+                        this.externs.put(k, this.getVariable(h.get(k)));
+                    }
+                    break;
+                case "metrics":
+                    
+                    LinkedHashMap<String, LinkedHashMap<String,Object>> l = (LinkedHashMap)entry.getValue();
+                    for(String k : l.keySet()) {
+                        this.metrics.put(k, l.get(k));
+                    }
+                    break;
+                case "MAGICMA":
+                    this.MAGICMA = ((Long) entry.getValue()).intValue();
+                    break;
+                case "initialWon":
+                    this.initialWon = ((Long) entry.getValue()).intValue();
+                    break;
+                default:
+                    System.err.println("COLAPSO TOTAL: Settings => "+key);
+                    break;
             }
-        } catch (ParseException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
      /**
@@ -160,11 +155,10 @@ public class Settings {
      * @param o Cualquier objeto JSONable(Un archivo o una String).
      * @return
      */
-    private Iterator getJsonValues(Object o){
+    private Iterator getJsonValues(String str){
         Iterator i = null;
         try {
             JSONParser parser = new JSONParser();
-            JSONObject str = (JSONObject) o;
             ContainerFactory containerFactory = new ContainerFactory(){
 
                 @Override
@@ -177,9 +171,10 @@ public class Settings {
                     return new LinkedList();
                 }
             };
-
-            Map json = (Map)parser.parse(str.toString(), containerFactory);
-            i = json.entrySet().iterator();
+            
+            Object json = parser.parse(str, containerFactory);
+            LinkedHashMap map = (LinkedHashMap)json;
+            i = map.entrySet().iterator();
             
         } catch (Exception ex) {
             System.err.println(ex);

@@ -45,7 +45,7 @@ public class Broker extends Brokeable{
     private double longRelative = -1.0;
     private Integer longTrades = -1;
     private double longProfit;
-    
+    private Date date;
     public Broker(Integer initialDeposit){
         super();
         this.indicatorController = this.getIndicatorController();
@@ -152,7 +152,7 @@ public class Broker extends Brokeable{
         Orden orden = (Orden) o;
         if(this.tradeLog) {
             this.file.addData(orden.getID() + ", "+ orden.getOpenTime() + ", "+ orden.getSideStr() +", "+ 1 + ", " + orden.getOpenPrice() +", "+orden.getSymbol()+", " + orden.
-                getSl() + ", "+ orden.getTp() + ", " + Date.dateToString() + ", "+orden.getClosePrice() + ", " + orden.getSwap() + ", " + orden.getLossProfit());
+                getSl() + ", "+ orden.getTp() + ", " + this.date.dateToString() + ", "+orden.getClosePrice() + ", " + orden.getSwap() + ", " + orden.getLossProfit());
         }
         
         this.balance += orden.getLossProfit();
@@ -203,6 +203,11 @@ public class Broker extends Brokeable{
     
     public Broker setLongRelative(Double rel) {
         this.longRelative = rel;
+        return this;
+    }
+    
+    public Broker setDate(Date date){
+        this.date = date;
         return this;
     }
     /**
@@ -268,6 +273,6 @@ public class Broker extends Brokeable{
     
     @Override
     public String toString(){
-        return Date.dateToString()+" Profit: " + this.getProfit() + " DD: "+this.getDrowDown();
+        return this.date.dateToString()+" Profit: " + this.getProfit() + " DD: "+this.getDrowDown();
     }
 }

@@ -116,6 +116,7 @@ public class MetricsController {
                 }
             }
         }
+        System.out.println(_short + " " + _long);
         //IR 
         return Arithmetic.redondear((_short / _long), 4);
     }

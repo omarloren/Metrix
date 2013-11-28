@@ -5,6 +5,7 @@ import io.Exceptions.SettingNotFound;
 import io.Inputs;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -26,8 +27,9 @@ public final class Iterador {
     
     public Iterador(Map<String, ArrayList> values) {
         Integer total = 1;
-        this.values = values;
+        this.values = values;        
         Set<String> set = values.keySet();
+        
         for (String key : set) {
             Object[] temp = new Object[values.get(key).size()];
             for (int i = 0; i < values.get(key).size(); i++) {
@@ -121,13 +123,15 @@ public final class Iterador {
      */
     private void rollOn(String cumulo){
         String[] base = cumulo.split("\\*");
-        Map<String, Object> temp = new HashMap<>();
+        Map<String, Object> temp = new LinkedHashMap();
         int i = 0;
-        Set<String> set = values.keySet();
+        Set<String> set = this.values.keySet();
+        
         for (String key : set) {
             temp.put(key, base[i]);
             i++;
         }
+        
         this.pool.add(temp);
     }
 }

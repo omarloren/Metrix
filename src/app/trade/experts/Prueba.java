@@ -21,7 +21,7 @@ public class Prueba extends Expert implements IExpert{
     public void onTick() {
         
        if(this.isTradeTime() && this.isNewCandle()) {
-            System.out.println(this.getDate() + "-"+Date.horaToString() + " > " + " " +this.b1.values);
+           
             try {
                 Thread.sleep(0);
             } catch (InterruptedException ex) {

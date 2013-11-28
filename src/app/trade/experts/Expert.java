@@ -13,7 +13,7 @@ import trade.AbstractExpert;
  */
 public class Expert extends AbstractExpert{
     public Extern extern; 
-   
+    private Date date;
     private Candle candle;
     public Expert build(Integer periodo) { 
         this.setPeriodo(periodo);
@@ -22,7 +22,7 @@ public class Expert extends AbstractExpert{
     }
     
     public void orderSend(Double lotes, Double sl, Double tp, Character side,Double price) {
-        Orden orden = new Orden(this.getSymbol(), this.getMagic(),lotes,side,price);
+        Orden orden = new Orden(this.date,this.getSymbol(), this.getMagic(),lotes,side,price);
         orden.setStopAndTake(sl, tp);
         orden.setBroker((Broker)this.getBrokeable());
         this.getBrokeable().sendOrder(orden);
@@ -32,10 +32,15 @@ public class Expert extends AbstractExpert{
         return this.candle;
     }
     
-    public void setExtern(Extern extern){
+    public Expert setExtern(Extern extern){
         this.extern = extern;
+        return this;
     }
     
+    public Expert setDate(Date date) {
+        this.date = date;
+        return this;
+    }
     @Override
     public int getSeconds() {
         throw new UnsupportedOperationException("Es un tester de minutos, no sé lo que es un segundo :(");
@@ -43,31 +48,31 @@ public class Expert extends AbstractExpert{
 
     @Override
     public int getMinutes() {
-        return Date.getMinutes();
+        return this.date.getMinutes();
     }
 
     @Override
     public int getHora() {
-        return Date.getHora();
+        return this.date.getHora();
     }
 
     @Override
     public int getDay() {
-        return Date.getDay();
+        return this.date.getDay();
     }
 
     @Override
     public int getMonth() {
-        return Date.getMonth();
+        return this.date.getMonth();
     }
 
     @Override
     public int getYear() {
-        return Date.getYear();
+        return this.date.getYear();
     }
     
     public String getDate() {
-        return Date.getDate();
+        return this.date.getDate();
     }
     
     @Override
