@@ -10,7 +10,7 @@ lotes = 1
 muestra = 700
 # ubicación de archivo .json
 extern_file = ./config/eurusd.json
-threads = 2
+threads = 1
 
 metrics = 0
 logger = true

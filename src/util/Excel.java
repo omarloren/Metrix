@@ -31,7 +31,6 @@ public class Excel {
     }
     
     public synchronized void addData(String str) {
-        
         this.values.add(str);
         if(this.limit == this.values.size()){
             this.writeItOut();

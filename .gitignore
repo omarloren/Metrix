@@ -6,3 +6,4 @@ manifest.mf
 /config/
 ./*.csv
 /dist/
+*.csv

@@ -29,7 +29,7 @@ public class Thready implements Runnable{
     Map<String, Object> iteracion;
     private Excel file;
     private Integer initialDeposit;
-    
+
     public Thready(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to){ 
         this.initialDeposit = settings.getInitialWon();
         this.metricsController = new MetricsController();
@@ -75,7 +75,6 @@ public class Thready implements Runnable{
         this.file.addData(str);
         System.err.println("#" + this.gear.id + " has finished => " + c.end());
     }
-    
     private double getStdDev(String id) {
         StdDev stdDev = (StdDev)this.metricsController.getStd(id);
         ArrayList<Double> values = new ArrayList();

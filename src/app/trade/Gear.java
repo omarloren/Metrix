@@ -35,9 +35,9 @@ public class Gear extends Thread{
     private Integer to;
     private MetricsController metricsController;
     private Boolean canSDT = false;
+    private Boolean lock = false;
     private int sundayCont = 0;
     public Double longDrowdown;
-    private Boolean lock = false;
     private static int cont = 0;
     public Boolean killMe = false;
     
@@ -89,6 +89,7 @@ public class Gear extends Thread{
             this.date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             ArrayList<Double> arr = this.evaluate(t);
             double open = arr.get(0);
+
             if(this.canSDT && this.date.dayOfWeek() != this.lastDay){
                 if(this.date.dayOfWeek() == 1){
                     this.sundayCont++;
@@ -96,6 +97,7 @@ public class Gear extends Thread{
                 this.lastDay = this.date.dayOfWeek();
             }
             if(this.canSDT){
+
                 if(this.date.getMonth() == 11 && this.sundayCont == 1){
                     this.expert.horaIni = this.sumHour(this.expert.horaIni);
                     this.expert.horaFin = this.sumHour(this.expert.horaFin);
@@ -107,6 +109,7 @@ public class Gear extends Thread{
                     this.sundayCont = 3;
                 }
             }
+
             if(this.date.getMonth() != this.lastMonth) {
                 Integer d = Integer.parseInt(this.date.getDate());
                 if(this.lock && d <= this._break) {
@@ -123,8 +126,7 @@ public class Gear extends Thread{
                     this.longDrowdown = this.broker.getDrowDown();
                     this.broker.reset();
                     this.lock = true;
-                }
-                
+                } 
             }
            
             this.expert.setOpenMin(open);
@@ -146,18 +148,22 @@ public class Gear extends Thread{
         }
     }
     
+    public Double getlongDrowdown(){
+        return this.longDrowdown;
+    }
+    
     /**
      * Suma una hora a la hora actual reseteando a cero si pasa de 24.
      * @param hour
      * @return 
      */
     private Double sumHour(Double hour){
-        if(hour >= 24){
+        if(hour >= 24) {
             hour = hour - 24;
         }
-        if(hour + 1 >= 24){
+        if(hour + 1 >= 24) {
             return (24-(hour+1));
-        }else{
+        } else {
             return (hour+1);
         }
     }
