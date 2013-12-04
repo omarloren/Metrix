@@ -110,6 +110,8 @@
                 "start" : 1,
                 "step" : 0,
                 "stop" : 1  
-        }
+        },
+        "volitibilidad" : 1,
+        "salida" : 0
     }
 }
