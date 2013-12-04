@@ -24,7 +24,6 @@ public class Thready implements Runnable{
     
     private Gear gear;
     private DBCursor data;
-    private static int cont = 0;  
     private MetricsController metricsController;      
     Map<String, Object> iteracion;
     private Excel file;
@@ -34,9 +33,8 @@ public class Thready implements Runnable{
         this.initialDeposit = settings.getInitialWon();
         this.metricsController = new MetricsController();
         this.gear = new Gear(settings, it, from, _break, to);
-        this.gear.setId(cont).setMetrics(this.metricsController);            
+        this.gear.setMetrics(this.metricsController);            
         this.iteracion = it;
-        cont++;
     }
     
     public Thready setData(DBCursor data){
@@ -51,16 +49,15 @@ public class Thready implements Runnable{
     
     @Override
     public void run() {
-        System.err.println("#" + this.gear.id + " iniciando :)");
         Crono c = new Crono();
         c.init();
         /**
         * Resulta que pinchi windows reinicia el cursor, no he encontrado por qué
-        * asi que tengo que hacer que el get se me mate 
+        * asi que tengo que hacer que el gear se me mate .
         */
         while (this.data.hasNext() && !this.gear.killMe) {
             DBObject o = this.data.next();
-            this.gear.Tick(o);
+            //this.gear.Tick(o);
         }
         Broker broker = this.gear.getBroker();
         double ir = this.metricsController.getIR();
@@ -73,8 +70,10 @@ public class Thready implements Runnable{
         String str = ir + ", , " + broker.getProfit() + ", " + broker.getTotalTrades() + ", " + painS.getIndex() + ", " + painS.getRatio() + ", " + shortMean + ", " + shortStd + ", " + broker.getDrowDown() + ", ,";
         str += broker.getLongProfit() + ", " + broker.getLongTrades() + ", " + painL.getIndex() + ", " + painL.getRatio() + ", "+ longMean + ", " + longStd + "," + broker.getLongRelative() + ", " + Iterador.toString(this.iteracion);
         this.file.addData(str);
-        System.err.println("#" + this.gear.id + " has finished => " + c.end());
+        State.addTime(c.end());
+        State.step();
     }
+    
     private double getStdDev(String id) {
         StdDev stdDev = (StdDev)this.metricsController.getStd(id);
         ArrayList<Double> values = new ArrayList();

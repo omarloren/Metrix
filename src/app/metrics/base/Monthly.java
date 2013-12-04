@@ -13,18 +13,14 @@ public class Monthly extends Metric{
     
     @Override
     public void feed(Double val) {
-        Double rest = val - this.lastValue;
-        this.lastValue = val;
+        Double rest = val;
         this.getValues().add(rest);
+        this.lastValue = val;
     }
     
     public Double getMonthlyAvg() {
-        Double sum = 0.0;
-        for (int i = 0; i < this.getValues().size(); i++) {
-            sum += this.getValues().get(i);
-        }
-        Double prm = (sum / this.getValues().size()) / 1000;
-        return prm;
+        Double avg = (this.lastValue - 100000) / this.getValues().size();
+        return avg / 1000;
     }
     
     @Override

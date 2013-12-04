@@ -1,6 +1,6 @@
 {
     "symbol" : "EURUSD",
-    "period" : 15,
+    "period" : 5,
     "MAGICMA" : 42,
     "spread" : 3,
     "initialWon" : 100000,
@@ -31,49 +31,30 @@
                 "step" : 0.0,
                 "stop" : 2.0
         },
-<<<<<<< HEAD
-        "periodoBoll" : {
-=======
         "periodoBoll3" : {
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
-                "start" : 13,
+                "start" : 30,
                 "step" : 0,
-                "stop" : 39
+                "stop" : 90
         },
         "periodoBoll2" : {
-<<<<<<< HEAD
                 "start" : 13,
                 "step" : 0,
                 "stop" : 39
-        },
-        "periodoBoll3" : {
-                "start" : 30,
-                "step" : 0,
-                "stop" : 90
-=======
-                "start" : 30,
-                "step" : 0,
-                "stop" : 90
         },
         "periodoBoll" : {
                 "start" : 13,
                 "step" : 0,
                 "stop" : 39
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
         },
         "periodoBollSalida" : {
-                "start" : 1,
+                "start" : 8,
                 "step" : 0,
                 "stop" : 15
         },
         "periodoBollSalida2" : {
                 "start" : 25,
                 "step" : 0,
-<<<<<<< HEAD
                 "stop" : 51
-=======
-                "stop" : 50
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
         },
         "periodoBollSalida3" : {
                 "start" : 40,
@@ -81,16 +62,12 @@
                 "stop" : 80
         },
         "XBoll" : {
-<<<<<<< HEAD
                 "start" : 1,
-=======
-                "start" : 10,
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
                 "step" : 0,
                 "stop" : 19
         },
         "XBoll2" : {
-                "start" : 20,
+                "start" : 60,
                 "step" : 0,
                 "stop" : 60
         },
@@ -100,16 +77,12 @@
                 "stop" : 120
         },
         "tp" : {
-                "start" : 13,
+                "start" : 18,
                 "step" : 0,
                 "stop" : 23
         },
         "sl" : {
-<<<<<<< HEAD
-                "start" : 12,
-=======
-                "start" : 13,
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
+                "start" : 22,
                 "step" : 0,
                 "stop" : 22
         },
@@ -119,13 +92,9 @@
                 "stop" : 1.0
         },
         "bollXDn" : {
-<<<<<<< HEAD
                 "start" : 0.001,
-=======
-                "start" : 0.0085,
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
                 "step" : 0.0,
-                "stop" : 0.0034
+                "stop" : 0.0001
         },
         "bollspecial" : {
                 "start" : 0.0003,
@@ -133,15 +102,9 @@
                 "stop" : 0.0002
         },
         "num_velas_salida" : {
-<<<<<<< HEAD
                 "start" : 108 ,
                 "step" : 0,
                 "stop" : 300    
-=======
-                "start" : 6 ,
-                "step" : 0,
-                "stop" : 16	
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
         },
         "limiteCruce" : {
                 "start" : 1,

@@ -87,16 +87,15 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         }
         
         if(this.isTradeTime() && this.bollDif < this.bollXUp && this.bollDif > this.bollXDn &&
-                this.ordersBySymbol() < this.limiteCruce ) {
+                this.ordersBySymbol() < this.limiteCruce && !(this.isBuy() && this.isSell()) ) {
             
-            if(this.getOpenMin() + this.bollSpecial <= this.bollDn) {
-                
+            if(!this.isBuyClose() && this.isBuy()) {
                 double stop = Arithmetic.redondear(this.getAsk() - this.sl);
                 double take = Arithmetic.redondear(this.getAsk() + this.tp);
                 this.orderSend(1.0, stop, take, '1', this.getAsk());
                 contVelas = 0;
                 
-            } else if(this.getOpenMin() - this.bollSpecial >= this.bollUp) {
+            } else if(!this.isSellClose() && this.isSell()) {
                 double stop = Arithmetic.redondear(this.getBid() + this.sl);
                 double take = Arithmetic.redondear(this.getBid() - this.tp);
                 this.orderSend(1.0, stop, take, '2', this.getBid());
@@ -108,7 +107,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
                 Orden o = (Orden)this.ordersTotal(this.getMagic()).get(i);
                 
                 if(o.getSide() == '2') {
-                    if(this.getOpenMin() <= this.bollDnS) {
+                    if(this.isSellClose()) {
                         o.close(this.getAsk(), "Cierre por bollinger");
                        
                     } else if(this.contVelas >= this.velasSalida) {
@@ -116,7 +115,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
                         
                     }
                 }else if(o.getSide() == '1') {
-                    if(this.getOpenMin() >= this.bollUpS) {                        
+                    if(this.isBuyClose()) {                        
                         o.close(this.getBid(), "Cierre por bollinger");
                         
                     } else if(this.contVelas >= this.velasSalida) {
@@ -130,6 +129,39 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     @Override
     public void onDone() {
         
+    }
+    
+    private Boolean isBuy(){
+        if ((this.getOpenMin() + this.bollSpecial) <= this.bollDn) {
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    private Boolean isSell(){
+        if ((this.getOpenMin() - this.bollSpecial) >= this.bollUp) {
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    private Boolean isSellClose(){
+        
+        if(this.getOpenMin() <= this.bollDnS){
+           return Boolean.TRUE; 
+        } else {
+           return Boolean.FALSE;
+        }
+    }
+    private Boolean isBuyClose(){
+        
+        if(this.getOpenMin() >= this.bollUpS){
+           return Boolean.TRUE; 
+        } else {
+           return Boolean.FALSE;
+        }
     }
     /**
      * Define si es tiempo de operar.

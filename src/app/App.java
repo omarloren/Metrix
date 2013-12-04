@@ -29,8 +29,10 @@ public class App {
     private Integer to;
     private Integer threads;
     private String headers = "";
+    private State state = new State();
     
     public App() {
+        this.state.hello();
         this.inputs = Inputs.getInstance();
         try {
             this.settings = new Settings(this.inputs.getInput("extern_file"));
@@ -47,10 +49,13 @@ public class App {
     }
     
     public void run(){
+        
         Map<String, Object> iteracion = new HashMap();
-        System.out.println(this.threads + " Threads " + this.iterador.getSize() + " iteraciones");
-        ExecutorService executor = Executors.newFixedThreadPool(this.threads);
+        System.out.println(this.threads + " Pruebas simultaneas...");
+        this.state.setTotal(this.iterador.getSize());
+        ExecutorService executor = Executors.newFixedThreadPool(this.threads+1);
         this.file.setLimit(this.iterador.getSize());
+        executor.execute(this.state);
         while (this.iterador.hasNext()) {
             Integer _from = Integer.parseInt(this.settings.getFrom());
             Integer _to = Integer.parseInt(this.settings.getTo());
@@ -70,8 +75,7 @@ public class App {
                 + "Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, "
                 + "LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, "+this.headers + "\n");
         
-        /*THE*/executor.shutdown();
-        System.out.println("Fin");
+        /*THE*/executor.shutdown();      
     }
         
     /**

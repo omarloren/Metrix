@@ -46,6 +46,7 @@ public class Broker extends Brokeable{
     private Integer longTrades = -1;
     private double longProfit;
     private Date date;
+    
     public Broker(Integer initialDeposit){
         super();
         this.indicatorController = this.getIndicatorController();
@@ -111,15 +112,15 @@ public class Broker extends Brokeable{
     @Override
     public void refreshDrowDown(Ordener orden) {
         Orden o  = (Orden)orden;
-        double floatProfit = this.initialDeposit + o.getLossProfit();
+        double floatProfit = this.balance + o.getLossProfit();
         double tempDropDn = 0.0;
         if (floatProfit > this.maxFloatProf) {
             this.maxFloatProf = floatProfit;
-            tempDropDn = ((this.maxFloatProf - this.minFloatProf)/this.maxFloatProf) * 100;
+            tempDropDn = ((this.maxFloatProf - this.minFloatProf) / this.maxFloatProf) * 100;
             
         }else if (floatProfit <this.minFloatProf){
             this.minFloatProf = floatProfit;
-            tempDropDn = ((this.maxFloatProf - this.minFloatProf)/this.maxFloatProf) * 100;
+            tempDropDn = ((this.maxFloatProf - this.minFloatProf) / this.maxFloatProf) * 100;
         }
         if (this.drowDown < tempDropDn) {
             this.drowDown = tempDropDn;
@@ -197,7 +198,6 @@ public class Broker extends Brokeable{
             }
         }
         this.racha++;
-        
     }
     
     

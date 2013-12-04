@@ -87,9 +87,11 @@ public class Gear extends Thread{
     public void Tick(DBObject t) {
         try {
             this.date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
+            
             ArrayList<Double> arr = this.evaluate(t);
+            //Primer precio en el array es la apertura de minuto.
             double open = arr.get(0);
-
+            //Si esta activa la opcion para ajustes en horarios de verano.
             if(this.canSDT && this.date.dayOfWeek() != this.lastDay){
                 if(this.date.dayOfWeek() == 1){
                     this.sundayCont++;
@@ -97,11 +99,12 @@ public class Gear extends Thread{
                 this.lastDay = this.date.dayOfWeek();
             }
             if(this.canSDT){
-
+                //Cambiamos el horario de la gráfica el primer domingo de noviembre
                 if(this.date.getMonth() == 11 && this.sundayCont == 1){
                     this.expert.horaIni = this.sumHour(this.expert.horaIni);
                     this.expert.horaFin = this.sumHour(this.expert.horaFin);
-                    this.sundayCont = 2;                    
+                    this.sundayCont = 2;        
+                //lo regresamos el segundo domingo de marzo.
                 }else if(this.date.getMonth() == 3 && this.sundayCont == 2){
                     
                     this.expert.horaFin = this.expert.extern.getDouble("horafinal");
@@ -109,30 +112,39 @@ public class Gear extends Thread{
                     this.sundayCont = 3;
                 }
             }
-
+            
             if(this.date.getMonth() != this.lastMonth) {
                 Integer d = Integer.parseInt(this.date.getDate());
+                /**
+                 * Maldito windows me orillo a que si eto llega a su último mes
+                 * se tiene que inmolar.
+                 */
                 if(this.lock && d <= this._break) {
                     this.killMe = true;
                     return;
                 }
                 this.lastMonth = this.date.getMonth();
-                this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
-                
+               
                 this.sundayCont = 0;
-                
+                //Si llegamos al break;
                 if(!this.lock && d >= this._break && d < this.to) {
-                    
+                    this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
                     this.longDrowdown = this.broker.getDrowDown();
                     this.broker.reset();
                     this.lock = true;
-                } 
+                } else {
+                     this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
+                }
             }
-           
             this.expert.setOpenMin(open);
+            //si es una nueva vela.
             if (this.candle.isNew(this.date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
+            /**
+             * Usamos los precios faltante para revisar que que las operaciones
+             * lleguen a sus limites etc.
+             */
             for (int i = 0; i < arr.size(); i++) {
                 double bid =arr.get(i);
                 double ask = Arithmetic.sumar(bid, this.settings.getSpread());
@@ -140,7 +152,6 @@ public class Gear extends Thread{
                 this.expert.setBid(bid);  
                 this.expert.setAsk(ask);
                 this.expert.onTick();
-
             }
           
         } catch (Exception ex) {

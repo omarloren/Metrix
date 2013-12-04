@@ -11,12 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -37,7 +33,7 @@ public class Settings {
     
     public Settings(String file){
         Iterator i = this.getJsonValues(this.fileToText(file));
-
+        
         while (i.hasNext()) {
             Map.Entry entry = (Map.Entry) i.next();
             String key = (String) entry.getKey();
@@ -64,6 +60,7 @@ public class Settings {
                     break;
                 case "externs":
                     Map<String, LinkedHashMap<String,Object>> h = ((LinkedHashMap)entry.getValue());
+                                       
                     for(String k : h.keySet()) {
                         this.externs.put(k, this.getVariable(h.get(k)));
                     }
@@ -87,13 +84,13 @@ public class Settings {
             }
         }
     }
-    
-     /**
-     * Extraemos el start, step, stop.
-     * @param l
-     * @return 
-     */
-    private ArrayList getVariable(LinkedHashMap<String,Object> l){
+        
+    /**
+    * Extraemos el start, step, stop.
+    * @param l
+    * @return 
+    */
+    private ArrayList getVariable(LinkedHashMap l){
         ArrayList temp = new ArrayList();
         Object start;
         Object step;
@@ -171,7 +168,6 @@ public class Settings {
                     return new LinkedList();
                 }
             };
-            
             Object json = parser.parse(str, containerFactory);
             LinkedHashMap map = (LinkedHashMap)json;
             i = map.entrySet().iterator();

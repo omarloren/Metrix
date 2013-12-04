@@ -47,7 +47,7 @@ public class Excel {
     }
     private void writeItOut() {
         if(this.canWrite) {
-            System.out.println("Escribiendo archivo...");
+            
             try (FileWriter wr = new FileWriter(this.file)) {
                 wr.append(this.header);
                 for (int i = 0; i < this.values.size(); i++) {

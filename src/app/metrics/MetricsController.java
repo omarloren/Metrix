@@ -116,9 +116,36 @@ public class MetricsController {
                 }
             }
         }
-        System.out.println(_short + " " + _long);
         //IR 
         return Arithmetic.redondear((_short / _long), 4);
+    }
+    public Double getMonthlyLong(){
+        for (int i = 0; i < metricsPool.size(); i++) {
+            Metric m = metricsPool.get(i);
+            if (m.getClass() == Monthly.class) {
+                Monthly month = ((Monthly) m);
+                switch (month.getId()) {
+                    case "LONG":
+                        return Arithmetic.redondear(month.getMonthlyAvg());
+                        //no-break
+                }
+            }
+        }
+        return 0.0;
+    }
+    public Double getMonthlyShort(){
+        for (int i = 0; i < metricsPool.size(); i++) {
+            Metric m = metricsPool.get(i);
+            if (m.getClass() == Monthly.class) {
+                Monthly month = ((Monthly) m);
+                switch (month.getId()) {
+                    case "SHORT":
+                        return Arithmetic.redondear(month.getMonthlyAvg());
+                        //no-break
+                }
+            }
+        }
+        return 0.0;
     }
 
     /**

@@ -1,7 +1,2 @@
-<<<<<<< HEAD
 Pass, IR, Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, lots,horainicial,horafinal,periodoBoll3,periodoBoll2,periodoBoll,periodoBollSalida,periodoBollSalida2,periodoBollSalida3,XBoll,XBoll2,XBoll3,tp,sl,bollXUp,bollXDn,bollspecial,num_velas_salida,limiteCruce,
-1, -8.9708, , 359.8, 17, 0.1666, 2.88, 283.25, 358.9, 0.2529, ,-899.8, 335, 0.7867, -0.15, 275.93, 209.96,0.2718,  1, 21.0, 22.0, 30, 13, 13, 1, 25, 40, 1, 20, 60, 13, 12, 0.1, 0.001, 3.0E-4, 108, 1
-=======
-Pass, IR, Short ->, Profit, Trades, Pain Index, Pain Ratio,Loss Avg, Loss stdDev, Loss DrowDown, LONG ->, Profit, Trades, Pain Index, Pain Ratio, Loss stdDev, Loss Avg, Loss DrowDown, sl,periodoBoll,periodoBollSalida2,lots,periodoBollSalida,bollXUp,tp,limiteCruce,XBoll3,XBoll2,num_velas_salida,horafinal,XBoll,horainicial,bollspecial,bollXDn,periodoBoll2,periodoBoll3,periodoBollSalida3,
-1, -11.9376, , -610.0, 10, 0.2597, 0.1989, 0.75, 676.5, 53.5, ,743.0, 154, 0.2597, 0.7107, -1.14, 243.7, 207.4122,  13, 13, 25, 1, 1, 100.0, 13, 1, 60, 20, 6, 22.0, 10, 21.0, 3.0E-4, 0.0085, 30, 13, 40
->>>>>>> 5c9e361fef39032bffec1908f3daaf88ad321e2e
+1, NaN, , 0.0, 0, 0.0, NaN, NaN, NaN, 0.0, ,0.0, -1, 0.0, NaN, NaN, NaN,-1.0,  1, 21.0, 22.0, 30, 13, 13, 8, 25, 40, 1, 60, 60, 18, 22, 0.1, 0.001, 3.0E-4, 108, 1
