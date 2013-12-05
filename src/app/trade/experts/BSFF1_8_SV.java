@@ -10,7 +10,7 @@ import trade.indicator.base.BollingerBands;
  * BSFF1_8_SV -> Bollinger Sin FIFO 1.8 Salida de Ventas.
  * @author omar
  */
-public class BSFF1_8_SV extends Expert implements IExpert{
+public class BSFF1_8_SV extends Expert{
     //Bandas de bollinger utilizadas.
     
     private BollingerBands b1;
@@ -34,8 +34,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
     private double bollDif;
     private Integer velasSalida;
     private Integer limiteCruce;
-    public Double horaIni;
-    public Double horaFin;
+    
     private Integer contVelas = 0;
     
     /**
@@ -64,8 +63,8 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         bollSpecial = this.extern.getDouble("bollspecial") ;
         velasSalida = this.extern.getInteger("num_velas_salida");
         limiteCruce = this.extern.getInteger("limiteCruce");
-        horaIni = this.extern.getDouble("horainicial");
-        horaFin = this.extern.getDouble("horafinal");
+        this.setHoraIni(this.extern.getDouble("horainicial"));
+        this.setHoraFin(this.extern.getDouble("horafinal"));
         
         this.bollUp = this.bollUp();
         this.bollDn = this.bollDn();
@@ -128,7 +127,7 @@ public class BSFF1_8_SV extends Expert implements IExpert{
 
     @Override
     public void onDone() {
-        
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     private Boolean isBuy(){
@@ -162,14 +161,6 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         } else {
            return Boolean.FALSE;
         }
-    }
-    /**
-     * Define si es tiempo de operar.
-     * @return 
-     */
-    public Boolean isTradeTime(){
-        double c = (this.getHora() + (this.getMinutes()*0.01)) + (this.getMinutes() /100);
-        return (c < this.horaFin) && (c >= this.horaIni) && this.isReady();
     }
     
     /**
@@ -212,6 +203,4 @@ public class BSFF1_8_SV extends Expert implements IExpert{
         double tempDn = (this.bx1.getLowerBand() + this.bx2.getLowerBand() + this.bx3.getLowerBand())/3;
         return Arithmetic.redondear(tempUp - tempDn, 7);
     }
-    
-   
 }

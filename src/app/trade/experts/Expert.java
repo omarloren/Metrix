@@ -15,6 +15,9 @@ public class Expert extends AbstractExpert{
     public Extern extern; 
     private Date date;
     private Candle candle;
+    private Double horaIni;
+    private Double horaFin;
+    
     public Expert build(Integer periodo) { 
         this.setPeriodo(periodo);
         this.candle = new Candle(periodo);
@@ -41,6 +44,32 @@ public class Expert extends AbstractExpert{
         this.date = date;
         return this;
     }
+    
+    /**
+     * Define si es tiempo de operar.
+     * @return 
+     */
+    public Boolean isTradeTime(){
+        double c = (this.getHora() + (this.getMinutes()*0.01)) + (this.getMinutes() /100);
+        return (c < this.horaFin) && (c >= this.horaIni) && this.isReady();
+    }
+    
+    public void setHoraIni(Double horaIni){
+        this.horaIni = horaIni;
+    }
+    
+    public void setHoraFin(Double horaFin){
+        this.horaFin = horaFin;
+    }
+    
+    public Double getHoraIni(){
+        return this.horaIni;
+    }
+    
+    public Double getHoraFin(){
+        return this.horaFin;
+    }
+    
     @Override
     public int getSeconds() {
         throw new UnsupportedOperationException("Es un tester de minutos, no sé lo que es un segundo :(");
@@ -80,4 +109,18 @@ public class Expert extends AbstractExpert{
         return this.candle.isNew(this.getMinutes());
     }
 
+    @Override
+    public void Init(){
+        //Vacío a propocito.
+    }
+    
+    @Override
+    public void onTick(){
+        //Vacío a propocito.
+    }
+    
+    @Override
+    public void onDone(){
+       //Vacío a propocito.
+    }
 }

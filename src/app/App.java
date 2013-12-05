@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.Excel;
 import util.Iterador;
 import util.Settings;
@@ -32,7 +34,6 @@ public class App {
     private State state = new State();
     
     public App() {
-        this.state.hello();
         this.inputs = Inputs.getInstance();
         try {
             this.settings = new Settings(this.inputs.getInput("extern_file"));
@@ -49,13 +50,22 @@ public class App {
     }
     
     public void run(){
-        
+        ExecutorService executor = Executors.newFixedThreadPool(this.threads) ;
         Map<String, Object> iteracion = new HashMap();
         System.out.println(this.threads + " Pruebas simultaneas...");
-        this.state.setTotal(this.iterador.getSize());
-        ExecutorService executor = Executors.newFixedThreadPool(this.threads+1);
+        try {
+            
+            if(Boolean.getBoolean(this.inputs.getInput("production"))){
+                this.state.setTotal(this.iterador.getSize());
+                this.state.hello();
+                executor = Executors.newFixedThreadPool(this.threads+1);
+                executor.execute(this.state);
+            } 
+        } catch (SettingNotFound ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         this.file.setLimit(this.iterador.getSize());
-        executor.execute(this.state);
         while (this.iterador.hasNext()) {
             Integer _from = Integer.parseInt(this.settings.getFrom());
             Integer _to = Integer.parseInt(this.settings.getTo());

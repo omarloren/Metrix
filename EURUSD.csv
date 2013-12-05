@@ -1,2 +1,2 @@
 Pass, IR, Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, lots,horainicial,horafinal,periodoBoll3,periodoBoll2,periodoBoll,periodoBollSalida,periodoBollSalida2,periodoBollSalida3,XBoll,XBoll2,XBoll3,tp,sl,bollXUp,bollXDn,bollspecial,num_velas_salida,limiteCruce,
-1, NaN, , 0.0, 0, 0.0, NaN, NaN, NaN, 0.0, ,0.0, -1, 0.0, NaN, NaN, NaN,-1.0,  1, 21.0, 22.0, 30, 13, 13, 8, 25, 40, 1, 60, 60, 18, 22, 0.1, 0.001, 3.0E-4, 108, 1
+1, 0.515, , 2376.4, 10, 19.8788, 0.15, 30618.2, 0.0, 0.0, ,30765.4, 250, 0.5805, 10.35, 1130.72, 861.03,23.7985,  1, 21.0, 22.0, 11, 16, 7, 368, 3, 77, 36, 36, 61, 120, 105, 0.1, 0.0032, 2.0E-4, 330, 1

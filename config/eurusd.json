@@ -3,6 +3,10 @@
     "period" : 5,
     "MAGICMA" : 42,
     "spread" : 3,
+    "experts" : {
+        "bbsff1_8_sv" : true,
+        "inception" : false,
+    },
     "initialWon" : 100000,
     "metrics": {
       "break" : 20130101,      
@@ -32,57 +36,57 @@
                 "stop" : 2.0
         },
         "periodoBoll3" : {
-                "start" : 30,
+                "start" : 11,
                 "step" : 0,
                 "stop" : 90
         },
         "periodoBoll2" : {
-                "start" : 13,
+                "start" : 16,
                 "step" : 0,
                 "stop" : 39
         },
         "periodoBoll" : {
-                "start" : 13,
+                "start" : 7,
                 "step" : 0,
                 "stop" : 39
         },
         "periodoBollSalida" : {
-                "start" : 8,
+                "start" : 368,
                 "step" : 0,
                 "stop" : 15
         },
         "periodoBollSalida2" : {
-                "start" : 25,
+                "start" : 3,
                 "step" : 0,
                 "stop" : 51
         },
         "periodoBollSalida3" : {
-                "start" : 40,
+                "start" : 77,
                 "step" : 0,
                 "stop" : 80
         },
         "XBoll" : {
-                "start" : 1,
+                "start" : 36,
                 "step" : 0,
                 "stop" : 19
         },
         "XBoll2" : {
-                "start" : 60,
+                "start" : 36,
                 "step" : 0,
                 "stop" : 60
         },
         "XBoll3" : {
-                "start" : 60,
+                "start" : 61,
                 "step" : 0,
                 "stop" : 120
         },
         "tp" : {
-                "start" : 18,
+                "start" : 120,
                 "step" : 0,
                 "stop" : 23
         },
         "sl" : {
-                "start" : 22,
+                "start" : 105,
                 "step" : 0,
                 "stop" : 22
         },
@@ -92,17 +96,17 @@
                 "stop" : 1.0
         },
         "bollXDn" : {
-                "start" : 0.001,
+                "start" : 0.0032,
                 "step" : 0.0,
                 "stop" : 0.0001
         },
         "bollspecial" : {
-                "start" : 0.0003,
+                "start" : 0.0002,
                 "step" : 0.0,
                 "stop" : 0.0002
         },
         "num_velas_salida" : {
-                "start" : 108 ,
+                "start" : 330,
                 "step" : 0,
                 "stop" : 300    
         },
@@ -110,8 +114,6 @@
                 "start" : 1,
                 "step" : 0,
                 "stop" : 1  
-        },
-        "volitibilidad" : 1,
-        "salida" : 0
+        }
     }
 }

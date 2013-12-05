@@ -1,7 +1,7 @@
 package app.trade;
 
 import app.metrics.MetricsController;
-import app.trade.experts.BSFF1_8_SV;
+import app.trade.experts.EHandler;
 import com.mongodb.DBObject;
 import help.Candle;
 import help.Date;
@@ -23,7 +23,7 @@ public class Gear extends Thread{
     private Broker broker;
     private Date date;
     public int id;
-    private BSFF1_8_SV expert = new BSFF1_8_SV();
+    EHandler eHandler;
     private Settings settings;    
     private String symbol;
     private Integer periodo;
@@ -38,7 +38,6 @@ public class Gear extends Thread{
     private Boolean lock = false;
     private int sundayCont = 0;
     public Double longDrowdown;
-    private static int cont = 0;
     public Boolean killMe = false;
     
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
@@ -59,13 +58,17 @@ public class Gear extends Thread{
         this.broker = new Broker(this.settings.getInitialWon());     
         this.broker.setDate(this.date);
         this.broker.setSpread(this.settings.getSpread());
-        this.expert.build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());
-        this.expert.setExtern(new Extern(it)).setDate(this.date);
-        this.expert.Init();
+        
+        this.eHandler = new EHandler(this.settings.getExpert());
+        this.eHandler.expert().build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());
+        this.eHandler.expert().setExtern(new Extern(it)).setDate(this.date);
+        this.eHandler.expert().Init();
+        
         if(this.canSDT && this.date.getMonth() >= 11 || this.date.getMonth() < 3){
-             this.expert.horaIni = this.sumHour(this.expert.horaIni);
-             this.expert.horaFin = this.sumHour(this.expert.horaFin);
+             this.eHandler.expert().setHoraIni(this.sumHour(this.eHandler.expert().getHoraIni()));
+             this.eHandler.expert().setHoraFin(this.sumHour(this.eHandler.expert().getHoraFin()));
         }
+        
     }
     
     public Gear setMetrics(MetricsController m){
@@ -86,6 +89,7 @@ public class Gear extends Thread{
     
     public void Tick(DBObject t) {
         try {
+            
             this.date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
             
             ArrayList<Double> arr = this.evaluate(t);
@@ -101,14 +105,14 @@ public class Gear extends Thread{
             if(this.canSDT){
                 //Cambiamos el horario de la gráfica el primer domingo de noviembre
                 if(this.date.getMonth() == 11 && this.sundayCont == 1){
-                    this.expert.horaIni = this.sumHour(this.expert.horaIni);
-                    this.expert.horaFin = this.sumHour(this.expert.horaFin);
+                    this.eHandler.expert().setHoraIni(this.sumHour(this.eHandler.expert().getHoraIni()));
+                    this.eHandler.expert().setHoraFin(this.sumHour(this.eHandler.expert().getHoraFin()));
                     this.sundayCont = 2;        
                 //lo regresamos el segundo domingo de marzo.
                 }else if(this.date.getMonth() == 3 && this.sundayCont == 2){
                     
-                    this.expert.horaFin = this.expert.extern.getDouble("horafinal");
-                    this.expert.horaIni = this.expert.extern.getDouble("horainicial");
+                    this.eHandler.expert().setHoraFin(this.eHandler.expert().extern.getDouble("horafinal"));
+                    this.eHandler.expert().setHoraIni(this.eHandler.expert().extern.getDouble("horainicial"));
                     this.sundayCont = 3;
                 }
             }
@@ -136,7 +140,7 @@ public class Gear extends Thread{
                      this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
                 }
             }
-            this.expert.setOpenMin(open);
+            this.eHandler.expert().setOpenMin(open);
             //si es una nueva vela.
             if (this.candle.isNew(this.date.getMinutes())) {
                 this.broker.setOpenMin(open);
@@ -149,9 +153,9 @@ public class Gear extends Thread{
                 double bid =arr.get(i);
                 double ask = Arithmetic.sumar(bid, this.settings.getSpread());
                 this.broker.ticker(bid);
-                this.expert.setBid(bid);  
-                this.expert.setAsk(ask);
-                this.expert.onTick();
+                this.eHandler.expert().setBid(bid);  
+                this.eHandler.expert().setAsk(ask);
+                this.eHandler.expert().onTick();
             }
           
         } catch (Exception ex) {

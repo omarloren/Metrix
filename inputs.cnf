@@ -11,7 +11,7 @@ muestra = 700
 # ubicación de archivo .json
 extern_file = ./config/eurusd.json
 threads = 1
-
+production = false
 metrics = 0
 logger = true
 trade_log = false

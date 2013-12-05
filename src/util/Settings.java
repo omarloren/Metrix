@@ -1,5 +1,6 @@
 package util;
 
+import app.Exceptions.MoreThanOneExpertError;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -30,8 +31,9 @@ public class Settings {
     private Double point;
     private Map<String, ArrayList> externs = new LinkedHashMap<>();
     private Map<String, Object> metrics = new HashMap<>();
+    private Map<String, Boolean> experts = new HashMap<>();
     
-    public Settings(String file){
+    public Settings(String file) {
         Iterator i = this.getJsonValues(this.fileToText(file));
         
         while (i.hasNext()) {
@@ -41,7 +43,7 @@ public class Settings {
             switch (key) {
                 case "symbol":
                     this.symbol = (String) entry.getValue();
-                    if(this.symbol.equals("USDJPY")){
+                    if (this.symbol.equals("USDJPY")) {
                         this.point = 0.001;
                     } else {
                         this.point = 0.0001;
@@ -60,13 +62,12 @@ public class Settings {
                     break;
                 case "externs":
                     Map<String, LinkedHashMap<String,Object>> h = ((LinkedHashMap)entry.getValue());
-                                       
+                                     
                     for(String k : h.keySet()) {
                         this.externs.put(k, this.getVariable(h.get(k)));
                     }
                     break;
                 case "metrics":
-                    
                     LinkedHashMap<String, LinkedHashMap<String,Object>> l = (LinkedHashMap)entry.getValue();
                     for(String k : l.keySet()) {
                         this.metrics.put(k, l.get(k));
@@ -77,6 +78,14 @@ public class Settings {
                     break;
                 case "initialWon":
                     this.initialWon = ((Long) entry.getValue()).intValue();
+                    break;
+                case "experts":
+                    LinkedHashMap<String,Object> e = (LinkedHashMap)entry.getValue();
+                    
+                    for(String k : e.keySet()) {
+                        this.experts.put(k, (Boolean)e.get(k));
+                    }
+                    
                     break;
                 default:
                     System.err.println("COLAPSO TOTAL: Settings => "+key);
@@ -115,11 +124,10 @@ public class Settings {
                 for (Long i = (Long)start; i <= (Long)stop; i += (Long)step) {
                     temp.add(i);
                 }
-            }else{
+            } else {
                temp.add(start);
             }
         }
-        
         return temp;
     }
     /**
@@ -181,6 +189,21 @@ public class Settings {
     /*
      * GETTERS PAIQUES*
      */
+    
+    public String getExpert() throws MoreThanOneExpertError{
+        String expert = "";
+        int cont = 0;
+        for(String k : this.experts.keySet()) {
+            if(this.experts.get(k)){
+                expert = k;
+                cont++;
+            }
+        }
+        if (cont>1) {
+            throw new MoreThanOneExpertError(this.experts.toString());
+        }
+        return expert;
+    }
     public String getSymbol(){
         return this.symbol;
     }

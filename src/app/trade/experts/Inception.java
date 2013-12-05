@@ -2,14 +2,13 @@ package app.trade.experts;
 
 import app.trade.Orden;
 import trade.Arithmetic;
-import trade.IExpert;
 import trade.indicator.base.Trend;
 
 /**
  *
  * @author omar
  */
-public class Inception extends Expert implements IExpert{
+public class Inception extends Expert {
     public Double horaIni;
     public Double horaFin;
     private Double sl;
@@ -25,8 +24,9 @@ public class Inception extends Expert implements IExpert{
         Integer velasFin = this.extern.getInteger("velasFin");
         Integer difIni = this.extern.getInteger("difIni");;
         Integer difFin = this.extern.getInteger("difFin");;
-        this.horaIni = this.extern.getDouble("horaInicial");
-        this.horaFin = this.extern.getDouble("horaFinal"); sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
+        this.setHoraIni(this.extern.getDouble("horainicial"));
+        this.setHoraFin(this.extern.getDouble("horafinal"));
+        sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
         this.tp = Arithmetic.multiplicar(this.extern.getInteger("tp").doubleValue() , this.getPoint());
         this.sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
         this.numCoincidencias = this.extern.getInteger("numCoincidencias");;
@@ -35,7 +35,7 @@ public class Inception extends Expert implements IExpert{
 
     @Override
     public void onTick() {
-        if( this.isNewCandle()){
+        if (this.isNewCandle()) {
             if(this.isTradeTime() && this.ordersBySymbol() < 1) {
                 if(this.trend.isDn()) {
                     double stop = Arithmetic.redondear(this.getAsk() - this.sl);
@@ -50,12 +50,12 @@ public class Inception extends Expert implements IExpert{
                 }
             }
         } else {
-            if (this.velasSalida > 0 && this.contV >= this.velasSalida){
+            if (this.velasSalida > 0 && this.contV >= this.velasSalida) {
                 for (int i = 0; i < this.ordersBySymbol(); i++) {
                     Orden o = (Orden)this.ordersTotal(this.getMagic()).get(i);
                     if(o.getSide() == '2') {
                         o.close(this.getAsk(), "Cierre por velas");
-                    }else if(o.getSide() == '1') {
+                    } else if(o.getSide() == '1') {
                         o.close(this.getBid(), "Cierre por velas");
                     }
                 }
@@ -66,7 +66,7 @@ public class Inception extends Expert implements IExpert{
 
     @Override
     public void onDone() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     public Boolean isTradeTime(){

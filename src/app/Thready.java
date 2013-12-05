@@ -57,7 +57,7 @@ public class Thready implements Runnable{
         */
         while (this.data.hasNext() && !this.gear.killMe) {
             DBObject o = this.data.next();
-            //this.gear.Tick(o);
+            this.gear.Tick(o);
         }
         Broker broker = this.gear.getBroker();
         double ir = this.metricsController.getIR();
