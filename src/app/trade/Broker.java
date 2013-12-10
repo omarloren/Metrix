@@ -19,41 +19,22 @@ import util.Excel;
 public class Broker extends Brokeable{
     
     IndicatorController indicatorController;
-    private Integer consecWins = 0;
-    private Integer consecLoss = 0;
-    private Integer racha = 0;
     private Integer prevOrder = -1;
-    private Integer shorts = 0;
-    private Integer longs = 0;
-    private Integer lossTrades = 0;
-    private Integer winTrades = 0;
     private Integer totalTrades = 0;
-    private Integer initialDeposit;
     private double balance ;
-    private double maxFloatProf;
-    private double minFloatProf;
-    private double drowDown = 0.0;
-    private double drowDownVal = 0.0;
-    private double largestProfit = 0.0;
-    private double largestLoss = 0.0;
     private double shortsPercent;
     private double longsPercent;
-    private double Bid;
-    private double Ask;
     private Excel file;
     private Boolean tradeLog;
-    private double longRelative = -1.0;
+    private double longDrawDown= -1.0;
     private Integer longTrades = -1;
     private double longProfit;
     private Date date;
-    
+        
     public Broker(Integer initialDeposit){
-        super();
+        super(initialDeposit);
         this.indicatorController = this.getIndicatorController();
-        this.initialDeposit = initialDeposit;
-        this.balance = this.initialDeposit.doubleValue();
-        this.maxFloatProf = this.initialDeposit.doubleValue();
-        this.minFloatProf = this.initialDeposit.doubleValue();
+        this.balance = this.getInitialDeposit();
         try {
             this.tradeLog = Boolean.parseBoolean(Inputs.getInstance().getInput("trade_log"));
         } catch (SettingNotFound ex) {
@@ -70,61 +51,15 @@ public class Broker extends Brokeable{
         this.indicatorController.setOpenMinute(d);
     }
     
-    public void reset(){
-        if(this.longTrades == -1 && this.longRelative == -1){
-            this.longRelative = this.drowDown;
-            this.longTrades = this.totalTrades;
-            this.longProfit = this.getProfit();
-            this.drowDown = 0.0;
-            this.balance = this.initialDeposit.doubleValue();
-            this.totalTrades = 0;
-            this.maxFloatProf = this.initialDeposit.doubleValue();
-            this.minFloatProf = this.initialDeposit.doubleValue();
-        }
-    }
-    
-    /**
-     * Saldamos variables.
-     */
-    public void flushBroker(){
-        //Porcentajes:
-        //Nota: Si divides dos daran como resultado un entero asi , casteamos 
-        //Uno de los dos a float y este cast se hace antes que la division ;).
-        this.shortsPercent = (float)this.shorts / this.totalTrades;
-        this.longsPercent = (float)this.longs / this.totalTrades;
-        this.drowDownVal = (this.drowDown * this.initialDeposit)/100;
-        //La racha:
-        if (this.prevOrder > 0) {
-            if(this.racha > this.consecWins) {
-                this.consecWins = this.racha;
-            }
-        }else if (this.prevOrder < 0) {
-            if (this.racha > this.consecLoss) {
-                this.consecLoss = this.racha;
-            }
-        }
-    }
-    
-    /**
-     * Refrescamos las perdidas o ganacias flotantes asi como el drowDown.
-     * @param orden 
-     */
     @Override
-    public void refreshDrowDown(Ordener orden) {
-        Orden o  = (Orden)orden;
-        double floatProfit = this.balance + o.getLossProfit();
-        double tempDropDn = 0.0;
-        if (floatProfit > this.maxFloatProf) {
-            this.maxFloatProf = floatProfit;
-            tempDropDn = ((this.maxFloatProf - this.minFloatProf) / this.maxFloatProf) * 100;
-            
-        }else if (floatProfit <this.minFloatProf){
-            this.minFloatProf = floatProfit;
-            tempDropDn = ((this.maxFloatProf - this.minFloatProf) / this.maxFloatProf) * 100;
-        }
-        if (this.drowDown < tempDropDn) {
-            this.drowDown = tempDropDn;
-        }
+    public void reset(){
+        this.longDrawDown = this.getDrawDown();
+        super.reset();
+        this.longTrades = this.totalTrades;
+        this.longProfit = this.getProfit();
+        this.balance = this.getInitialDeposit();
+        this.totalTrades = 0;
+        this.hasBeingReseted = true;
     }
     
     /**
@@ -144,9 +79,7 @@ public class Broker extends Brokeable{
     }
     
     @Override
-    public void ordenOpenCallback(Ordener o) {
-       //System.out.println(" + Open  - " +(Orden)o);
-    }
+    public void ordenOpenCallback(Ordener o) {}
 
     @Override
     public void orderCloseCallback(Ordener o) {
@@ -155,55 +88,8 @@ public class Broker extends Brokeable{
             this.file.addData(orden.getID() + ", "+ orden.getOpenTime() + ", "+ orden.getSideStr() +", "+ 1 + ", " + orden.getOpenPrice() +", "+orden.getSymbol()+", " + orden.
                 getSl() + ", "+ orden.getTp() + ", " + this.date.dateToString() + ", "+orden.getClosePrice() + ", " + orden.getSwap() + ", " + orden.getLossProfit());
         }
-        
         this.balance += orden.getLossProfit();
         this.totalTrades++;
-        if (orden.getSide() == '1') { 
-            this.longs++;   //Contamos las compras.
-        }else if (orden.getSide() == '2') {
-            this.shorts++; //Contamos las ventas.
-        }
-        //Contamos ganancias/Perdidas, y racha +/-.
-        if (orden.getLossProfit() > 0) { 
-            this.winTrades++;
-            if(orden.getLossProfit() > this.largestProfit) {
-                this.largestProfit = orden.getLossProfit();
-            }
-            if (this.prevOrder != null) { //Si no es la primer orden en cerrar.
-                if (this.prevOrder < 0) {
-                    if (this.consecLoss < this.racha){
-                        this.consecLoss = this.racha;
-                    }
-                    this.racha=0;
-                    this.prevOrder = 1; //Marcamos racha como positiva.
-                }                       
-            } else {
-                this.prevOrder = 1;
-            }
-        } else if (orden.getLossProfit() < 0) { //Si la orden perdió.
-            this.lossTrades++;
-            if (Math.abs(orden.getLossProfit()) > this.largestLoss) {
-                this.largestLoss = orden.getLossProfit();
-            }
-            if (this.prevOrder != null) {
-                if (this.prevOrder>0) {
-                    if (this.consecWins<this.racha) {
-                        this.consecWins = this.racha;
-                    }
-                    this.racha=0;
-                    this.prevOrder = -1;
-                }
-            } else {
-                this.prevOrder = -1;
-            }
-        }
-        this.racha++;
-    }
-    
-    
-    public Broker setLongRelative(Double rel) {
-        this.longRelative = rel;
-        return this;
     }
     
     public Broker setDate(Date date){
@@ -224,36 +110,17 @@ public class Broker extends Brokeable{
     public double getBalance(){   
         return this.balance;
     }
+    
     public double getProfit() {
-        return Arithmetic.redondear(this.getBalance() - this.initialDeposit);
-    }
-    public double getDrowDown(){
-        return Arithmetic.redondear(this.drowDown);
+        return Arithmetic.redondear(this.getBalance() - this.getInitialDeposit());
     }
     
-    public double getDrowDownValue(){
-        return this.drowDownVal;
-    }
     public Double getShortPositionsPercent(){
           return this.shortsPercent;
     }
+    
     public Double getLongPositionsPerscent(){
         return this.longsPercent;
-    }
-    
-    public Integer getShortPositions(){
-        return this.shorts;
-    }
-    public Integer getLongPositions(){
-        return this.longs;
-    }
-    
-    public Integer getWinTrades(){
-        return this.winTrades;
-    }
-    
-    public Integer getLossTrades(){
-        return this.lossTrades;
     }
     
     public Integer getTotalTrades(){
@@ -267,12 +134,13 @@ public class Broker extends Brokeable{
         return Arithmetic.redondear(this.longProfit);
     }
     
-    public double getLongRelative() {
-        return Arithmetic.redondear(this.longRelative);
+    public double getLongDrawDown() {
+        return Arithmetic.redondear(this.longDrawDown);
     }
     
     @Override
     public String toString(){
-        return this.date.dateToString()+" Profit: " + this.getProfit() + " DD: "+this.getDrowDown();
+        //return this.date.dateToString()+" Profit: " + this.getProfit() + " DD: "+this.getDrowDown();
+        return "";
     }
 }

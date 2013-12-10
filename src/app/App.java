@@ -54,8 +54,7 @@ public class App {
         Map<String, Object> iteracion = new HashMap();
         System.out.println(this.threads + " Pruebas simultaneas...");
         try {
-            
-            if(Boolean.getBoolean(this.inputs.getInput("production"))){
+            if(Boolean.parseBoolean(this.inputs.getInput("production"))){
                 this.state.setTotal(this.iterador.getSize());
                 this.state.hello();
                 executor = Executors.newFixedThreadPool(this.threads+1);
@@ -82,8 +81,8 @@ public class App {
         }
         
         this.file.setHeader("Pass, IR, "
-                + "Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, "
-                + "LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, DrowDown, "+this.headers + "\n");
+                + "Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "
+                + "LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "+this.headers + "\n");
         
         /*THE*/executor.shutdown();      
     }

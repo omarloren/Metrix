@@ -3,8 +3,6 @@
 
 # Monedas que el sistema utilizará, debes de separarlas con un coma.
 currencies = EURUSD,USDJPY,GBPUSD,USDCHF,EURGBP 
-#Spread que usará la prueba.
-spread = 4.0
 lotes = 1
 #Tamaño de la muestra, se correrá como máximo de pruebas este número.
 muestra = 700

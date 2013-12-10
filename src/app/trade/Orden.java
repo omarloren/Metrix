@@ -12,7 +12,7 @@ import trade.Ordener;
 
 public class Orden extends Ordener {
     private Broker broker;
-    private double profitLoss = 0.0; //Ganancia o Perdida.
+    
     private Integer tickVal = 100000;
     private String dateStr;
     private Date date;
@@ -91,7 +91,7 @@ public class Orden extends Ordener {
                 temp *= -1;
             }
         }
-        res= (temp * this.tickVal) - this.getSwap();
+        res = (temp * this.tickVal) - this.getSwap();
         return Arithmetic.redondear(res, 2);
     }
     

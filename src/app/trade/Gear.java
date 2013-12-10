@@ -60,18 +60,18 @@ public class Gear extends Thread{
         this.broker.setSpread(this.settings.getSpread());
         
         this.eHandler = new EHandler(this.settings.getExpert());
-        this.eHandler.expert().build(this.periodo).__construct(this.broker, this.from, this.symbol,this.settings.getPoint(), this.settings.getMagic());
+        this.eHandler.expert().build(this.periodo).__construct(this.broker, this.from, this.symbol, this.settings.getPoint(), this.settings.getMagic());
         this.eHandler.expert().setExtern(new Extern(it)).setDate(this.date);
         this.eHandler.expert().Init();
         
-        if(this.canSDT && this.date.getMonth() >= 11 || this.date.getMonth() < 3){
+        if(this.canSDT && this.date.getMonth() >= 11 || this.date.getMonth() < 3) {
              this.eHandler.expert().setHoraIni(this.sumHour(this.eHandler.expert().getHoraIni()));
              this.eHandler.expert().setHoraFin(this.sumHour(this.eHandler.expert().getHoraFin()));
         }
         
     }
     
-    public Gear setMetrics(MetricsController m){
+    public Gear setMetrics(MetricsController m) {
         this.metricsController = m;
         this.metricsController.newPain("LONG",this.settings.getInitialWon(), this.settings.getFrom(), String.valueOf(this._break));
         this.metricsController.newPain("SHORT",this.settings.getInitialWon(), String.valueOf(this._break), this.settings.getTo());
@@ -96,20 +96,20 @@ public class Gear extends Thread{
             //Primer precio en el array es la apertura de minuto.
             double open = arr.get(0);
             //Si esta activa la opcion para ajustes en horarios de verano.
-            if(this.canSDT && this.date.dayOfWeek() != this.lastDay){
-                if(this.date.dayOfWeek() == 1){
+            if (this.canSDT && this.date.dayOfWeek() != this.lastDay) {
+                if (this.date.dayOfWeek() == 1) {
                     this.sundayCont++;
                 }
                 this.lastDay = this.date.dayOfWeek();
             }
-            if(this.canSDT){
+            if (this.canSDT) {
                 //Cambiamos el horario de la gráfica el primer domingo de noviembre
-                if(this.date.getMonth() == 11 && this.sundayCont == 1){
+                if (this.date.getMonth() == 11 && this.sundayCont == 1) {
                     this.eHandler.expert().setHoraIni(this.sumHour(this.eHandler.expert().getHoraIni()));
                     this.eHandler.expert().setHoraFin(this.sumHour(this.eHandler.expert().getHoraFin()));
                     this.sundayCont = 2;        
                 //lo regresamos el segundo domingo de marzo.
-                }else if(this.date.getMonth() == 3 && this.sundayCont == 2){
+                } else if(this.date.getMonth() == 3 && this.sundayCont == 2) {
                     
                     this.eHandler.expert().setHoraFin(this.eHandler.expert().extern.getDouble("horafinal"));
                     this.eHandler.expert().setHoraIni(this.eHandler.expert().extern.getDouble("horainicial"));
@@ -128,12 +128,12 @@ public class Gear extends Thread{
                     return;
                 }
                 this.lastMonth = this.date.getMonth();
-               
                 this.sundayCont = 0;
                 //Si llegamos al break;
+                
                 if(!this.lock && d >= this._break && d < this.to) {
                     this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
-                    this.longDrowdown = this.broker.getDrowDown();
+                    this.longDrowdown = this.broker.getDrawDown();
                     this.broker.reset();
                     this.lock = true;
                 } else {
@@ -145,6 +145,7 @@ public class Gear extends Thread{
             if (this.candle.isNew(this.date.getMinutes())) {
                 this.broker.setOpenMin(open);
             }
+            
             /**
              * Usamos los precios faltante para revisar que que las operaciones
              * lleguen a sus limites etc.

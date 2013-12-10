@@ -67,8 +67,9 @@ public class Thready implements Runnable{
         double longMean = Arithmetic.redondear(this.getMean("LONG"), 2);
         Pain painS = this.metricsController.getPain("SHORT");
         Pain painL = this.metricsController.getPain("LONG");
-        String str = ir + ", , " + broker.getProfit() + ", " + broker.getTotalTrades() + ", " + painS.getIndex() + ", " + painS.getRatio() + ", " + shortMean + ", " + shortStd + ", " + broker.getDrowDown() + ", ,";
-        str += broker.getLongProfit() + ", " + broker.getLongTrades() + ", " + painL.getIndex() + ", " + painL.getRatio() + ", "+ longMean + ", " + longStd + "," + broker.getLongRelative() + ", " + Iterador.toString(this.iteracion);
+        
+        String str = ir + ", , " + broker.getProfit() + ", " + broker.getTotalTrades() + ", " + painS.getIndex() + ", " + painS.getRatio() + ", " + shortMean + ", " + shortStd + ", " + broker.getDrawDown()+ ", ,";
+        str += broker.getLongProfit() + ", " + broker.getLongTrades() + ", " + painL.getIndex() + ", " + painL.getRatio() + ", "+ longMean + ", " + longStd + "," + broker.getLongDrawDown() + ", " + Iterador.toString(this.iteracion);
         this.file.addData(str);
         State.addTime(c.end());
         State.step();
@@ -78,6 +79,11 @@ public class Thready implements Runnable{
         StdDev stdDev = (StdDev)this.metricsController.getStd(id);
         ArrayList<Double> values = new ArrayList();
         double last = this.initialDeposit;
+        //quick-fix
+        if (id.equals("SHORT")) {
+            stdDev.getValues().remove(0);
+        }
+        
         for (int i = 0; i < stdDev.getValues().size(); i++) {
             if (stdDev.getValues().get(i) < last) {
                 double val = Arithmetic.redondear(stdDev.getValues().get(i),1);
@@ -85,6 +91,7 @@ public class Thready implements Runnable{
             }
             last = stdDev.getValues().get(i);
         }
+        
         return new StandardDeviation(values.size(), values).calculateStdDev();
     }
     
@@ -93,6 +100,10 @@ public class Thready implements Runnable{
         double sum = 0;
         int c = 0;
         double last = this.initialDeposit;
+        //quick-fix
+        if (id.equals("SHORT")) {
+            stdDev.getValues().remove(0);
+        }
         for (int i = 0; i < stdDev.getValues().size(); i++) {
             if (stdDev.getValues().get(i) < last) {
                 double val = Arithmetic.redondear(stdDev.getValues().get(i),1);

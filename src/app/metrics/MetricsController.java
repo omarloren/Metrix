@@ -158,7 +158,6 @@ public class MetricsController {
         Pain p = null;
         for (int i = 0; i < metricsPool.size(); i++) {
             if (metricsPool.get(i).getClass() == Pain.class) {
-
                 if (metricsPool.get(i).getId().equals(id)) {
                     p = (Pain) metricsPool.get(i);
                 }
@@ -179,6 +178,7 @@ public class MetricsController {
             if (metricsPool.get(i).getClass() == StdDev.class) {
                 if (metricsPool.get(i).getId().equals(id)) {
                     s = (StdDev) metricsPool.get(i);
+                    
                 }
             }
         }
