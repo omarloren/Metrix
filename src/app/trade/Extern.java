@@ -14,6 +14,7 @@ public class Extern {
     }
     
     public Integer getInteger(String ex){
+        
         return Integer.parseInt((String)this.settings.get(ex));
     }
     

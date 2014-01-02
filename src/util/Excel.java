@@ -21,7 +21,7 @@ public class Excel {
     private String header = "";
     private Boolean canWrite;
     private Integer limit;
-    public Excel(String file){
+    public Excel(String file) {
         this.file = file + ".csv";
         try {
             this.canWrite = Boolean.parseBoolean(Inputs.getInstance().getInput("logger"));
@@ -32,16 +32,16 @@ public class Excel {
     
     public synchronized void addData(String str) {
         this.values.add(str);
-        if(this.limit == this.values.size()){
+        if(this.limit == this.values.size()) {
             this.writeItOut();
         }
     }
     
-    public Excel setHeader(String header){
+    public Excel setHeader(String header) {
         this.header = header;
         return this;
     }
-    public Excel setLimit(Integer i){
+    public Excel setLimit(Integer i) {
         this.limit = i;
         return this;
     }

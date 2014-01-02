@@ -1,6 +1,5 @@
 package app.metrics;
 
-import app.metrics.base.Monthly;
 import app.metrics.base.Metric;
 import app.metrics.base.Pain;
 import app.metrics.base.StdDev;
@@ -36,19 +35,6 @@ public class MetricsController {
         return p;
     }
 
-    /**
-     * Añade un nuevo IR
-     *
-     * @param id
-     * @param from
-     * @param to
-     * @return
-     */
-    public Monthly newIR(String id, String from, String to) {
-        Monthly ir = new Monthly(id, from, to);
-        metricsPool.add(ir);
-        return ir;
-    }
 
     /**
      * Añade un nuevo controlador de Desviaciones estadard
@@ -100,54 +86,13 @@ public class MetricsController {
      * @return
      */
     public Double getIR() {
-        Double _long = 0.0;
-        Double _short = 0.0;
-        for (int i = 0; i < metricsPool.size(); i++) {
-            Metric m = metricsPool.get(i);
-            if (m.getClass() == Monthly.class) {
-                Monthly month = ((Monthly) m);
-                switch (month.getId()) {
-                    case "LONG":
-                        _long = month.getMonthlyAvg();
-                        break;
-                    case "SHORT":
-                        _short = month.getMonthlyAvg();
-                        break;
-                }
-            }
-        }
+        Double _long = this.getPain("LONG").getMonthlyAvg();
+        Double _short = this.getPain("SHORT").getMonthlyAvg();
+       
         //IR 
         return Arithmetic.redondear((_short / _long), 4);
     }
-    public Double getMonthlyLong(){
-        for (int i = 0; i < metricsPool.size(); i++) {
-            Metric m = metricsPool.get(i);
-            if (m.getClass() == Monthly.class) {
-                Monthly month = ((Monthly) m);
-                switch (month.getId()) {
-                    case "LONG":
-                        return Arithmetic.redondear(month.getMonthlyAvg());
-                        //no-break
-                }
-            }
-        }
-        return 0.0;
-    }
-    public Double getMonthlyShort(){
-        for (int i = 0; i < metricsPool.size(); i++) {
-            Metric m = metricsPool.get(i);
-            if (m.getClass() == Monthly.class) {
-                Monthly month = ((Monthly) m);
-                switch (month.getId()) {
-                    case "SHORT":
-                        return Arithmetic.redondear(month.getMonthlyAvg());
-                        //no-break
-                }
-            }
-        }
-        return 0.0;
-    }
-
+   
     /**
      * Devulve un determinado pain index.
      *

@@ -13,10 +13,12 @@ import trade.AbstractExpert;
  */
 public class Expert extends AbstractExpert{
     public Extern extern; 
-    private Date date;
+    Date date;
     private Candle candle;
     private Double horaIni;
     private Double horaFin;
+    private Double horaIniOrigen;
+    private Double horaFinOrigen;
     
     public Expert build(Integer periodo) { 
         this.setPeriodo(periodo);
@@ -54,12 +56,18 @@ public class Expert extends AbstractExpert{
         return (c < this.horaFin) && (c >= this.horaIni) && this.isReady();
     }
     
-    public void setHoraIni(Double horaIni){
-        this.horaIni = horaIni;
+    public void setHoraIni(Object horaIni){
+        this.horaIni = Double.parseDouble(horaIni.toString());
+        if(this.horaIniOrigen == null){
+            this.horaIniOrigen = this.horaIni;
+        }
     }
     
-    public void setHoraFin(Double horaFin){
-        this.horaFin = horaFin;
+    public void setHoraFin(Object horaFin){
+        this.horaFin = Double.parseDouble(horaFin.toString());
+        if(this.horaFinOrigen == null){
+            this.horaFinOrigen = this.horaFin;
+        }
     }
     
     public Double getHoraIni(){
@@ -69,7 +77,19 @@ public class Expert extends AbstractExpert{
     public Double getHoraFin(){
         return this.horaFin;
     }
+    /**
+     * @return devuelve la hora inicial de origen.
+     */
+    public Double getHoraIniOrigen(){
+        return this.horaIniOrigen;
+    }
     
+    /**
+     * @return devuelve la hora final de origen.
+     */
+    public Double getHoraFinOrigen(){
+        return this.horaFinOrigen;
+    }
     @Override
     public int getSeconds() {
         throw new UnsupportedOperationException("Es un tester de minutos, no sé lo que es un segundo :(");

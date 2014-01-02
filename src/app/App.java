@@ -40,7 +40,6 @@ public class App {
             _break = ((Long)this.settings.getMetrics().get("break")).toString();
             this.iterador = new Iterador(this.settings.getExterns());
             this.mongo = new Mongo().setDB("data").setCollection(this.settings.getSymbol());
-            this.file = new Excel(this.settings.getSymbol());
             this.from = Integer.parseInt(this.settings.getFrom());
             this.to = Integer.parseInt(this.settings.getTo());
             this.threads = Integer.parseInt(this.inputs.getInput("threads"));            
@@ -48,7 +47,10 @@ public class App {
             System.out.println(ex);
         }
     }
-    
+    public App setFile(String name){
+        this.file = new Excel("results/"+name);
+        return this;
+    }
     public void run(){
         ExecutorService executor = Executors.newFixedThreadPool(this.threads) ;
         Map<String, Object> iteracion = new HashMap();
@@ -70,7 +72,6 @@ public class App {
             Integer _to = Integer.parseInt(this.settings.getTo());
             this.testData = this.mongo.getRange(_from, _to);
             iteracion = this.iterador.next();
-           
             Thready thready = new Thready(this.settings, iteracion, this.from, Integer.parseInt(_break), this.to);
             thready.setData(testData).setFile(this.file);
             executor.execute(thready);
@@ -81,8 +82,8 @@ public class App {
         }
         
         this.file.setHeader("Pass, IR, "
-                + "Short ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "
-                + "LONG  ->, Profit, Trades, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "+this.headers + "\n");
+                + "Short ->, Profit, Trades, IR-O, Sharp, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "
+                + "LONG  ->, Profit, Trades, IR-O, Sharp, Pain Index, Pain Ratio, Loss Avg, Loss stdDev, Drawdown %, "+this.headers + "\n");
         
         /*THE*/executor.shutdown();      
     }

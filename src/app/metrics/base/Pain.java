@@ -10,7 +10,7 @@ import trade.Arithmetic;
 public class Pain extends Metric{
     
     private Integer initialAccount;
-    
+        
     public Pain(String id, Integer initialAccount, String from, String to) {
         super(id, from, to);
         this.initialAccount = initialAccount;
@@ -25,7 +25,7 @@ public class Pain extends Metric{
     
     public Double getIndex() {
         if(this.length() > 1) {
-            return Arithmetic.redondear(this.getPeakDrowDrawn() / this.length());
+            return Arithmetic.redondear(this.getPeakDrowDrawn() / this.getValues().size());
         } else {
             return 0.0;
         }
@@ -51,17 +51,23 @@ public class Pain extends Metric{
         for (int i = 0; i < this.getValues().size(); i++) {
             sum += (this.getPercent(this.getValues().get(i)));
         }
-        return sum / (this.getValues().size()-1);
+        return sum / this.length();
     }
     
     public Double getAnunualisedReturn() {
-        if(this.length() > 1) {
-            Double last = (this.getValues().get(this.length()-1) - 100000);
+        if(this.getValues().size()> 1) {
+            Double last = (this.getValues().get(this.length()) - 100000);
             return  Arithmetic.redondear(last / this.length() * 12 / 1000, 2);
         } else {
             return 0.0;
         }
     }
+    
+    public Double getMonthlyAvg() {
+        Double last = (this.getValues().get(this.length()) - 100000);
+        return Arithmetic.redondear(last / this.length());
+    }
+    
     
     public Double getRatio() {
         Double temp = Arithmetic.redondear(this.getAnunualisedReturn() / this.getIndex(), 2);
@@ -99,7 +105,7 @@ public class Pain extends Metric{
         return this.initialAccount;
     }
     
-    private int length(){
+    private Integer length(){
         return this.getValues().size() - 1;
     }
     

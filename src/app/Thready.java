@@ -60,16 +60,18 @@ public class Thready implements Runnable{
             this.gear.Tick(o);
         }
         Broker broker = this.gear.getBroker();
-        double ir = this.metricsController.getIR();
+        
         double shortStd = Arithmetic.redondear(this.getStdDev("SHORT"), 2);
         double longStd = Arithmetic.redondear(this.getStdDev("LONG"), 2);
         double shortMean = Arithmetic.redondear(this.getMean("SHORT"), 2);
         double longMean = Arithmetic.redondear(this.getMean("LONG"), 2);
         Pain painS = this.metricsController.getPain("SHORT");
         Pain painL = this.metricsController.getPain("LONG");
+        painS.feed(broker.getBalance());
+        double ir = this.metricsController.getIR();
         
-        String str = ir + ", , " + broker.getProfit() + ", " + broker.getTotalTrades() + ", " + painS.getIndex() + ", " + painS.getRatio() + ", " + shortMean + ", " + shortStd + ", " + broker.getDrawDown()+ ", ,";
-        str += broker.getLongProfit() + ", " + broker.getLongTrades() + ", " + painL.getIndex() + ", " + painL.getRatio() + ", "+ longMean + ", " + longStd + "," + broker.getLongDrawDown() + ", " + Iterador.toString(this.iteracion);
+        String str = ir + ", , " + broker.getProfit() + ", " + broker.getTotalTrades() + ", "+broker.getOpIR()+", "+broker.getSharp()+ ", " + painS.getIndex() + ", " + painS.getRatio() + ", " + shortMean + ", " + shortStd + ", " + broker.getDrawDown()+ ", ,";
+        str += broker.getLongProfit() + ", " + broker.getLongTrades()+", "+broker.getLongOpIR() +", "+broker.getLongSharp()  + ", " + painL.getIndex() + ", " + painL.getRatio() + ", "+ longMean + ", " + longStd + "," + broker.getLongDrawDown() + ", " + Iterador.toString(this.iteracion);
         this.file.addData(str);
         State.addTime(c.end());
         State.step();
@@ -80,7 +82,7 @@ public class Thready implements Runnable{
         ArrayList<Double> values = new ArrayList();
         double last = this.initialDeposit;
         //quick-fix
-        if (id.equals("SHORT")) {
+        if (id.equals("SHORT") && stdDev.getValues().size() > 0) {
             stdDev.getValues().remove(0);
         }
         
@@ -101,7 +103,7 @@ public class Thready implements Runnable{
         int c = 0;
         double last = this.initialDeposit;
         //quick-fix
-        if (id.equals("SHORT")) {
+        if (id.equals("SHORT") && stdDev.getValues().size() > 0) {
             stdDev.getValues().remove(0);
         }
         for (int i = 0; i < stdDev.getValues().size(); i++) {

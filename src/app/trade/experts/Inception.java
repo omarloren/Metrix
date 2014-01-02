@@ -15,7 +15,7 @@ public class Inception extends Expert {
     private Double tp;
     private Integer numCoincidencias;
     private Integer velasSalida;
-    private Integer contV;
+    private Integer contV = 0;
     private Trend trend;
     
     @Override
@@ -24,8 +24,9 @@ public class Inception extends Expert {
         Integer velasFin = this.extern.getInteger("velasFin");
         Integer difIni = this.extern.getInteger("difIni");;
         Integer difFin = this.extern.getInteger("difFin");;
-        this.setHoraIni(this.extern.getDouble("horainicial"));
-        this.setHoraFin(this.extern.getDouble("horafinal"));
+        this.setHoraIni(this.extern.getInteger("horaInicial"));
+        this.setHoraFin(this.extern.getInteger("horaFinal"));
+        this.velasSalida = this.extern.getInteger("VelasSalida");
         sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
         this.tp = Arithmetic.multiplicar(this.extern.getInteger("tp").doubleValue() , this.getPoint());
         this.sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
@@ -36,6 +37,7 @@ public class Inception extends Expert {
     @Override
     public void onTick() {
         if (this.isNewCandle()) {
+            this.contV++;
             if(this.isTradeTime() && this.ordersBySymbol() < 1) {
                 if(this.trend.isDn()) {
                     double stop = Arithmetic.redondear(this.getAsk() - this.sl);
@@ -48,29 +50,21 @@ public class Inception extends Expert {
                     this.orderSend(1.0, stop, take, '2', this.getBid());
                     this.contV = 0;
                 }
-            }
-        } else {
-            if (this.velasSalida > 0 && this.contV >= this.velasSalida) {
-                for (int i = 0; i < this.ordersBySymbol(); i++) {
-                    Orden o = (Orden)this.ordersTotal(this.getMagic()).get(i);
-                    if(o.getSide() == '2') {
-                        o.close(this.getAsk(), "Cierre por velas");
-                    } else if(o.getSide() == '1') {
-                        o.close(this.getBid(), "Cierre por velas");
-                    }
+            }            
+        } else if (this.velasSalida > 0 && this.contV >= this.velasSalida) {
+            for (int i = 0; i < this.ordersBySymbol(); i++) {
+                Orden o = (Orden)this.ordersTotal(this.getMagic()).get(i);
+                if(o.getSide() == '2') {
+                    o.close(this.getAsk(), "Cierre por velas");
+                } else if(o.getSide() == '1') {
+                    o.close(this.getBid(), "Cierre por velas");
                 }
             }
         }
-        this.contV++;
     }
 
     @Override
     public void onDone() {
         
-    }
-
-    public Boolean isTradeTime(){
-        double c = (this.getHora() + (this.getMinutes()*0.01)) + (this.getMinutes() /100);
-        return (c < this.horaFin) && (c >= this.horaIni) && this.isReady();
     }
 }

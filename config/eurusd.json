@@ -9,14 +9,111 @@
         "inception" : false,
     },
     "metrics": {
-      "break" : 20130101,      
+      "break" : 20130103,      
       "pain-i" : true,     
       "pain-r" : true,     
       "relative-dd" : true,
       "ir" : true
     },
     "date" : { 
-        "from" : 20080104,
-        "to" : 20131001
+        "from" : 20100103,
+        "to" : 20131101
+    },
+    "externs" : {
+        "lots" : {
+                "start" : 1,
+                "step" : 0,
+                "stop" : 2
+        },
+        "horainicial" : {
+                "start" : 22.0,
+                "step" : 0.0,
+                "stop" : 1.0
+        },
+        "horafinal" : {
+                "start" : 23.0,
+                "step" : 0.0,
+                "stop" : 2.0
+        },
+        "periodoBoll" : {
+                "start" : 3,
+                "step" : 0,
+                "stop" : 5
+        },
+        "periodoBoll2" : {
+                "start" : 32,
+                "step" : 0,
+                "stop" : 33
+        },
+        "periodoBoll3" : {
+                "start" : 12,
+                "step" : 0,
+                "stop" : 5
+        },
+        "periodoBollSalida" : {
+                "start" : 1,
+                "step" : 0,
+                "stop" : 3
+        },
+        "periodoBollSalida2" : {
+                "start" : 86,
+                "step" : 0,
+                "stop" : 87
+        },
+        "periodoBollSalida3" : {
+                "start" : 18,
+                "step" : 0,
+                "stop" : 19
+        },
+        "XBoll" : {
+                "start" : 1,
+                "step" : 0,
+                "stop" : 3
+        },
+        "XBoll2" : {
+                "start" : 58,
+                "step" : 0,
+                "stop" : 59
+        },
+        "XBoll3" : {
+                "start" : 90,
+                "step" : 0,
+                "stop" : 91
+        },
+        "tp" : {
+                "start" : 106,
+                "step" : 0,
+                "stop" : 107
+        },
+        "sl" : {
+                "start" : 89,
+                "step" : 0,
+                "stop" : 94
+        },
+        "bollXUp" : {
+                "start" : 0.03,
+                "step" : 0.000,
+                "stop" : 0.035
+        },
+        "bollXDn" : {
+                "start" : 0.0051,
+                "step" : 0.0,
+                "stop" : 0.0056
+        },
+        "bollspecial" : {
+                "start" : -0.0002,
+                "step" : 0.000,
+                "stop" : 0.00
+        },
+        "num_velas_salida" : {
+                "start" : 92,
+                "step" : 0,
+                "stop" : 92
+        },
+        "limiteCruce" : {
+                "start" : 1,
+                "step" : 0,
+                "stop" : 1  
+        }
     }
 }

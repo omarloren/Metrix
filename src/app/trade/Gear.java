@@ -28,7 +28,7 @@ public class Gear extends Thread{
     private String symbol;
     private Integer periodo;
     private Candle candle;
-    private int lastMonth = 1;
+    private int lastMonth = -1;
     private int lastDay = 0;
     private Integer from;
     private Integer _break;
@@ -43,6 +43,7 @@ public class Gear extends Thread{
     public Gear(Settings settings, Map<String, Object> it, Integer from, Integer _break, Integer to) {
         Inputs input = Inputs.getInstance();
         this.date = new Date();
+        
         try {
             this.canSDT = Boolean.parseBoolean(input.getInput("SDT"));
         } catch (SettingNotFound ex) {
@@ -68,15 +69,12 @@ public class Gear extends Thread{
              this.eHandler.expert().setHoraIni(this.sumHour(this.eHandler.expert().getHoraIni()));
              this.eHandler.expert().setHoraFin(this.sumHour(this.eHandler.expert().getHoraFin()));
         }
-        
     }
     
     public Gear setMetrics(MetricsController m) {
         this.metricsController = m;
         this.metricsController.newPain("LONG",this.settings.getInitialWon(), this.settings.getFrom(), String.valueOf(this._break));
         this.metricsController.newPain("SHORT",this.settings.getInitialWon(), String.valueOf(this._break), this.settings.getTo());
-        this.metricsController.newIR("LONG", this.settings.getFrom(), String.valueOf(this._break));
-        this.metricsController.newIR( "SHORT", String.valueOf(this._break), this.settings.getTo());
         this.metricsController.newStdDev("LONG", this.settings.getFrom(), String.valueOf(this._break));
         this.metricsController.newStdDev("SHORT",  String.valueOf(this._break), this.settings.getTo());
         return this;
@@ -89,9 +87,10 @@ public class Gear extends Thread{
     
     public void Tick(DBObject t) {
         try {
-            
             this.date.setTime(String.valueOf(t.get("DTYYYYMMDD")), String.valueOf(t.get("TIME")));
-            
+            if(this.lastMonth == -1){
+                this.lastMonth = this.date.getMonth();
+            }
             ArrayList<Double> arr = this.evaluate(t);
             //Primer precio en el array es la apertura de minuto.
             double open = arr.get(0);
@@ -110,9 +109,8 @@ public class Gear extends Thread{
                     this.sundayCont = 2;        
                 //lo regresamos el segundo domingo de marzo.
                 } else if(this.date.getMonth() == 3 && this.sundayCont == 2) {
-                    
-                    this.eHandler.expert().setHoraFin(this.eHandler.expert().extern.getDouble("horafinal"));
-                    this.eHandler.expert().setHoraIni(this.eHandler.expert().extern.getDouble("horainicial"));
+                    this.eHandler.expert().setHoraFin(this.eHandler.expert().getHoraFinOrigen());
+                    this.eHandler.expert().setHoraIni(this.eHandler.expert().getHoraIniOrigen());
                     this.sundayCont = 3;
                 }
             }
@@ -127,18 +125,19 @@ public class Gear extends Thread{
                     this.killMe = true;
                     return;
                 }
-                this.lastMonth = this.date.getMonth();
-                this.sundayCont = 0;
-                //Si llegamos al break;
                 
+                //Si llegamos al break;
                 if(!this.lock && d >= this._break && d < this.to) {
                     this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
                     this.longDrowdown = this.broker.getDrawDown();
                     this.broker.reset();
                     this.lock = true;
+                    this.lastMonth = -1;
                 } else {
-                     this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
+                    this.metricsController.refresh(this.date.getDate(),this.broker.getBalance());
                 }
+                this.lastMonth = this.date.getMonth();
+                this.sundayCont = 0;
             }
             this.eHandler.expert().setOpenMin(open);
             //si es una nueva vela.
@@ -214,5 +213,9 @@ public class Gear extends Thread{
     
     public MetricsController getController(){
         return this.metricsController;
+    }
+    
+    public Date getDate(){
+        return this.date;
     }
 }

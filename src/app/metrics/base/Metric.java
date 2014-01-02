@@ -80,7 +80,7 @@ public abstract class Metric {
         Integer t = Integer.parseInt(this.getTo());
         Integer d = Integer.parseInt(date);
         Boolean b = false;
-        if(d >= f && d <= t) {
+        if(d > f && d <= t) {
             b = true;
         }
         return b;

@@ -33,7 +33,7 @@ public class BSFF1_8_SV extends Expert{
     private double bollDnS;
     private double bollDif;
     private Integer velasSalida;
-    private Integer limiteCruce;
+    private Integer limiteCruce = 1;
     
     private Integer contVelas = 0;
     

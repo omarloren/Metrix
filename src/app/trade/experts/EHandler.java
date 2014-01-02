@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Ojala hubiera usado Java-Reflection aquí :(
  * @author omar
  */
 public class EHandler {
