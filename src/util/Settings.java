@@ -44,7 +44,7 @@ public class Settings {
                 case "symbol":
                     this.symbol = (String) entry.getValue();
                     if (this.symbol.equals("USDJPY")) {
-                        this.point = 0.001;
+                        this.point = 0.01;
                     } else {
                         this.point = 0.0001;
                     }

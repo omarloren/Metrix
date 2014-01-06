@@ -59,7 +59,6 @@ public class Gear extends Thread{
         this.broker = new Broker(this.settings.getInitialWon());     
         this.broker.setDate(this.date);
         this.broker.setSpread(this.settings.getSpread());
-        
         this.eHandler = new EHandler(this.settings.getExpert());
         this.eHandler.expert().build(this.periodo).__construct(this.broker, this.from, this.symbol, this.settings.getPoint(), this.settings.getMagic());
         this.eHandler.expert().setExtern(new Extern(it)).setDate(this.date);
@@ -194,7 +193,7 @@ public class Gear extends Thread{
         r.add((Double)e.get("HIGH"));
         r.add((Double)e.get("LOW"));
         r.add((Double)e.get("CLOSE"));
-       
+        
         Double base = r.get(0);
         for (int i = 1; i < r.size(); i++) {   
             if(Double.compare(base , r.get(i)) == 0){

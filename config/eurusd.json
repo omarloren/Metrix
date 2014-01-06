@@ -1,5 +1,5 @@
 {
-    "symbol" : "EURUSD",
+    "symbol" : "USDJPY",
     "period" : 15,
     "MAGICMA" : 42,
     "spread" : 3,
@@ -26,12 +26,12 @@
                 "stop" : 2
         },
         "horainicial" : {
-                "start" : 22.0,
+                "start" : 0.0,
                 "step" : 0.0,
                 "stop" : 1.0
         },
         "horafinal" : {
-                "start" : 23.0,
+                "start" : 1.0,
                 "step" : 0.0,
                 "stop" : 2.0
         },
@@ -91,17 +91,17 @@
                 "stop" : 94
         },
         "bollXUp" : {
-                "start" : 0.03,
+                "start" : 1.0,
                 "step" : 0.000,
                 "stop" : 0.035
         },
         "bollXDn" : {
-                "start" : 0.0051,
+                "start" : 0.0,
                 "step" : 0.0,
                 "stop" : 0.0056
         },
         "bollspecial" : {
-                "start" : -0.0002,
+                "start" : 0.0002,
                 "step" : 0.000,
                 "stop" : 0.00
         },

@@ -37,9 +37,10 @@ public class App {
         this.inputs = Inputs.getInstance();
         try {
             this.settings = new Settings(this.inputs.getInput("extern_file"));
+            this.inputs.setPoint(this.settings.getPoint());
             _break = ((Long)this.settings.getMetrics().get("break")).toString();
             this.iterador = new Iterador(this.settings.getExterns());
-            this.mongo = new Mongo().setDB("data").setCollection(this.settings.getSymbol());
+            this.mongo = new Mongo().setDB(this.settings.getSymbol()).setCollection("data");
             this.from = Integer.parseInt(this.settings.getFrom());
             this.to = Integer.parseInt(this.settings.getTo());
             this.threads = Integer.parseInt(this.inputs.getInput("threads"));            

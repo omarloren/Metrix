@@ -2,7 +2,6 @@ package app.trade.experts;
 
 import app.trade.Orden;
 import trade.Arithmetic;
-import trade.IExpert;
 import trade.indicator.base.BollingerBands;
 
 
@@ -43,24 +42,24 @@ public class BSFF1_8_SV extends Expert{
     @Override
     public void Init() {
         
-        b1 = this.iBand(this.extern.getInteger("periodoBoll"));
-        b2 = this.iBand(this.extern.getInteger("periodoBoll2"));
-        b3 = this.iBand(this.extern.getInteger("periodoBoll3"));
+        this.b1 = this.iBand(this.extern.getInteger("periodoBoll"));
+        this.b2 = this.iBand(this.extern.getInteger("periodoBoll2"));
+        this.b3 = this.iBand(this.extern.getInteger("periodoBoll3"));
         
-        bs1 = this.iBand(this.extern.getInteger("periodoBollSalida"));
-        bs2 = this.iBand(this.extern.getInteger("periodoBollSalida2"));
-        bs3 = this.iBand(this.extern.getInteger("periodoBollSalida3"));
+        this.bs1 = this.iBand(this.extern.getInteger("periodoBollSalida"));
+        this.bs2 = this.iBand(this.extern.getInteger("periodoBollSalida2"));
+        this.bs3 = this.iBand(this.extern.getInteger("periodoBollSalida3"));
         
-        bx1 = this.iBand(this.extern.getInteger("XBoll"));
-        bx2 = this.iBand(this.extern.getInteger("XBoll2"));
-        bx3 = this.iBand(this.extern.getInteger("XBoll3"));
+        this.bx1 = this.iBand(this.extern.getInteger("XBoll"));
+        this.bx2 = this.iBand(this.extern.getInteger("XBoll2"));
+        this.bx3 = this.iBand(this.extern.getInteger("XBoll3"));
         
-        bollXDn = this.extern.getDouble("bollXDn") ;
-        bollXUp = this.extern.getDouble("bollXUp") ;
+        this.bollXDn = this.extern.getDouble("bollXDn") ;
+        this.bollXUp = this.extern.getDouble("bollXUp") ;
         
-        sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
-        tp = Arithmetic.multiplicar(this.extern.getInteger("tp").doubleValue() , this.getPoint());
-        bollSpecial = this.extern.getDouble("bollspecial") ;
+        this.sl = Arithmetic.multiplicar(this.extern.getInteger("sl").doubleValue() , this.getPoint());
+        this.tp = Arithmetic.multiplicar(this.extern.getInteger("tp").doubleValue() , this.getPoint());
+        this.bollSpecial = this.extern.getDouble("bollspecial") ;
         velasSalida = this.extern.getInteger("num_velas_salida");
         limiteCruce = this.extern.getInteger("limiteCruce");
         this.setHoraIni(this.extern.getDouble("horainicial"));
@@ -77,6 +76,7 @@ public class BSFF1_8_SV extends Expert{
     public void onTick() {
         
         if(this.isNewCandle()) {
+            
             this.bollUp = this.bollUp();
             this.bollDn = this.bollDn();
             this.bollUpS = this.bollUpS();
@@ -131,6 +131,7 @@ public class BSFF1_8_SV extends Expert{
     }
     
     private Boolean isBuy(){
+        
         if ((this.getOpenMin() + this.bollSpecial) <= this.bollDn) {
             return Boolean.TRUE;
         }else{

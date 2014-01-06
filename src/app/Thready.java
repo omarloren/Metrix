@@ -55,6 +55,7 @@ public class Thready implements Runnable{
         * Resulta que pinchi windows reinicia el cursor, no he encontrado por qué
         * asi que tengo que hacer que el gear se me mate .
         */
+        
         while (this.data.hasNext() && !this.gear.killMe) {
             DBObject o = this.data.next();
             this.gear.Tick(o);

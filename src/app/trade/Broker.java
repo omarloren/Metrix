@@ -91,7 +91,9 @@ public class Broker extends Brokeable{
     }
     
     @Override
-    public void ordenOpenCallback(Ordener o) {}
+    public void ordenOpenCallback(Ordener o) {
+     //   System.out.println("open: "+o);
+    }
 
     @Override
     public void orderCloseCallback(Ordener o) {
